@@ -2,11 +2,19 @@ DROP FUNCTION IF EXISTS field_val_cursor;
 
 DELIMITER //
 
+/*
+This time we are using a function instead of a procedure. The difference
+is that fuctions can have a return value
+
+Documentation:
+http://dev.mysql.com/doc/refman/5.7/en/create-procedure.html
+*/
 CREATE FUNCTION field_val_cursor() RETURNS TEXT
 
 BEGIN
 DECLARE retval TEXT DEFAULT "";
 DECLARE cursdone INT;
+#this time we are seecting into two variables
 DECLARE titlefetch TEXT DEFAULT "";
 DECLARE valfetch TEXT DEFAULT "";
 
@@ -19,6 +27,7 @@ get_field:LOOP
     IF cursdone = 1 THEN LEAVE get_field;
     END IF;
 
+    #make sure we format the index fields properl
     IF retval NOT LIKE "" AND valfetch NOT LIKE "" THEN 
         SET retval = CONCAT(retval, "; ", titlefetch, ": ", valfetch);
     ELSEIF valfetch NOT LIKE "" THEN
@@ -29,8 +38,6 @@ get_field:LOOP
 
 END LOOP get_field;
 CLOSE field_cursor;
-
-
 
 RETURN retval;
 

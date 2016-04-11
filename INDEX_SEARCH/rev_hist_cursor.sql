@@ -14,6 +14,7 @@ DECLARE rev_cursor CURSOR FOR SELECT item FROM RevisionHistory;
 DECLARE CONTINUE HANDLER FOR NOT FOUND SET revdone = 1;
 SET @temp = "";
 
+#loop through the Revision History table to get the required tables andd query them
 OPEN rev_cursor;
 get_rev:LOOP
     FETCH rev_cursor INTO valfetch;
@@ -30,6 +31,17 @@ get_rev:LOOP
     ELSE
         SET valfetch = REPLACE(valfetch, "tblCollections_Content.", "");
         
+        /*
+        Here we need to run a query using a variable as the table field. To do 
+        this we use a Prepare and Execute Statement. This allows us to create a 
+        string that is our query, and then run it.
+
+        Documentation:
+        http://dev.mysql.com/doc/refman/5.7/en/sql-syntax-prepared-statements.html
+        
+        Tutorial:
+        http://www.mysqltutorial.org/mysql-prepared-statement.aspx
+        */
         SET @sql = CONCAT("SELECT `", valfetch, "` INTO @temp FROM `tblCollections_Content` WHERE ID = ", item_id, ";");
         PREPARE stmt FROM @sql;
         EXECUTE stmt;
