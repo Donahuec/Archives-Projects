@@ -1,0 +1,159 @@
+ID	CollectionID	LevelContainerID	LevelContainerIdentifier	Title	PrivateTitle	Date	Description	RootContentID	ParentID	ContainsContent	SortOrder	Enabled	dateadded
+12685	50	3	0	Single Photo Groupings		1991/92		7224	7389	1	1	1	
+12686	50	5	.000/1	Willard Tuomi Retirement		1991/92	Willard Tuomi Retirement	7224	12685	0	1	1	
+12687	50	5	.000/2	Margaret Drabble Convocation speech as Lucas Lecturer		1991/92	Margaret Drabble Convocation speech as Lucas Lecturer	7224	12685	0	2	1	
+12688	50	5	.000/3	Japanese Ambassador to the U.S. reception/dinner		1991/92	Japanese Ambassador to the U.S. reception/dinner	7224	12685	0	3	1	
+12689	50	5	.000/4	Carleton Cont. Ensemble Concert		1991/92	Carleton Cont. Ensemble Concert	7224	12685	0	4	1	
+12690	50	5	.000/5	Reed College Commencement		1991/92	Reed College Commencement	7224	12685	0	5	1	
+12691	50	5	.000/6	Woodwind Quartet Players		1991/92	Woodwind Quartet Players	7224	12685	0	6	1	
+12692	50	5	.000/7	Dante Stephenson's Jazz Club		1991/92	Dante Stephenson's Jazz Club	7224	12685	0	7	1	
+12693	50	5	.000/8	Dormitory floor / House residents: 4th Watson		1991/92		7224	12685	0	8	1	
+12694	50	5	.000/9	Dance		1991/92		7224	12685	0	9	1	
+12695	50	5	.000/10	Frank Wright and Conley Brooks		1991/92	Frank Wright and Conley Brooks	7224	12685	0	10	1	
+12696	50	5	.000/11	Head Residents		1991/92	Head Residents	7224	12685	0	11	1	
+29751	50	5	.000/12	Group of Alumni		1991/92	Group of Alumni	7224	12685	0	12	1	
+12698	50	5	.000/13	Math Skills Center		1991/92	Math Skills Center	7224	12685	0	13	1	
+12699	50	5	.000/14	Student post office workers		1991/92	Student post office workers	7224	12685	0	14	1	
+12700	50	5	.000/15	Musicians in chapel [cello and harp]		1991/92	Musicians in chapel [cello and harp]	7224	12685	0	15	1	
+12701	50	5	.000/16	Carleton Knights singing at fund-raiser for victims of the Los Angeles riots		1991/92	Carleton Knights singing at fund-raiser for victims of the Los Angeles riots	7224	12685	0	16	1	
+12702	50	5	.000/17	Burton Dining Hall		1991/92	Burton Dining Hall	7224	12685	0	17	1	
+12703	50	5	.000/18	Students painting chapel exteriors		1991/92	Students painting chapel exteriors	7224	12685	0	18	1	
+29670	50	5	.000/19	Dormitory floor / House residents: 1st Nourse		1991/92		7224	12685	0	19	1	
+29673	50	5	.000/20	Dormitory floor / House residents: 4th Myers		1991/92		7224	12685	0	20	1	
+29750	50	5	.000/21	Steve Lewis's Birthday Cake		1991/92	Steve Lewis's Birthday Cake	7224	12685	0	21	1	
+12704	50	3	0.001	Commencement		1991/92		7224	7389	0	2	1	
+12705	50	3	0.002	Reunion		1991/92		7224	7389	0	3	1	
+12706	50	3	0.003	Athletics: Tennis - Men's		1991/92		7224	7389	0	4	1	
+12707	50	3	0.004	Individual portraits		1991/92	Individual portraits	7224	7389	0	5	1	
+12708	50	3	0.005	Visit: Harold Stassen		1991/92		7224	7389	0	6	1	
+12709	50	3	0.006	Computer Music		1991/92	Computer Music	7224	7389	0	7	1	
+12710	50	3	0.007	Northfield Historical Society		1991/92	Northfield Historical Society	7224	7389	0	8	1	
+12711	50	3	0.008	Alumni news		1991/92		7224	7389	0	9	1	
+12712	50	3	0.009	Physics		1991/92	Physics	7224	7389	0	10	1	
+12713	50	3	0.01	Admissions Office		1991/92	Admissions Office	7224	7389	0	11	1	
+12714	50	3	0.011	German Parliament		1991/92	German Parliament	7224	7389	0	12	1	
+12715	50	3	0.012	Athletics: Football		1991/92		7224	7389	0	13	1	
+12716	50	3	0.013	Northfield Rescue Squad		1991/92	Northfield Rescue Squad	7224	7389	0	14	1	
+12717	50	3	0.014	Fundraising Campaign		1991/92	Fundraising Campaign	7224	7389	0	15	1	
+12718	50	3	0.015	Class Agents		1991/92	Class Agents	7224	7389	0	16	1	
+12719	50	3	0.016	Bookstore		1991/92	Bookstore	7224	7389	0	17	1	
+12720	50	3	0.017	Biology		1991/92	Biology	7224	7389	0	18	1	
+12721	50	3	0.018	Residential Life		1991/92	Residential Life	7224	7389	0	19	1	
+12722	50	3	0.019	Faculty/ Staff		1991/92	Faculty/ Staff	7224	7389	0	20	1	
+12723	50	3	0.02	Northfield		1991/92	Northfield	7224	7389	0	21	1	
+12724	50	3	0.021	Music		1991/92	Music	7224	7389	0	22	1	
+12725	50	3	0.022	New Student Week		1991/92	New Student Week	7224	7389	0	23	1	
+12726	50	3	0.023	ACT (Acting in the Community Together)		1991/92		7224	7389	0	24	1	
+12727	50	3	0.024	Athletics: Soccer - Men's		1991/92		7224	7389	0	25	1	
+12728	50	3	0.025	Campus views		1991/92	Campus views	7224	7389	0	26	1	
+12729	50	3	0.026	Visitors		1991/92		7224	7389	0	27	1	
+12730	50	3	0.027	Mary Okada Memorial Garden		1991/92	Mary Okada Memorial Garden	7224	7389	0	28	1	
+12731	50	3	0.028	Athletics: Volleyball - Women's		1991/92		7224	7389	0	29	1	
+12732	50	3	0.029	Freshman Scholars		1991/92	Freshman Scholars	7224	7389	0	30	1	
+12733	50	3	0.03	Asia Week		1991/92	Asia Week	7224	7389	0	31	1	
+12734	50	3	0.031	Athletics: Cross Country- Men's and Women's		1991/92		7224	7389	0	32	1	
+12735	50	3	0.032	Homecoming		1991/92	Homecoming  Additional subjects: Alumni Rugby; 125th Anniversary celebration; Alumni reception	7224	7389	0	33	1	
+12736	50	3	0.033	Athletes of the Year		1991/92	Athletes of the Year	7224	7389	0	34	1	
+12737	50	3	0.034	Halloween		1991/92	Halloween	7224	7389	0	35	1	
+12738	50	3	0.035	Library		1991/92	Library	7224	7389	0	36	1	
+12739	50	3	0.036	Eleanor Smeal visit		1991/92	Eleanor Smeal visit	7224	7389	0	37	1	
+12740	50	3	0.037	Music: Chamber Singers		1991/92		7224	7389	0	38	1	
+12741	50	3	0.038	Athletics: Basketball - Men's		1991/92		7224	7389	0	39	1	
+12742	50	3	0.039	Athletics: Baseball		1991/92		7224	7389	0	40	1	
+12743	50	3	0.04	Alumni		1991/92	Alumni	7224	7389	0	41	1	
+12744	50	3	0.041	Athletics: Swimming and Diving		1991/92		7224	7389	0	42	1	
+12745	50	3	0.042	Visit: Gwendolyn Brooks		1991/92		7224	7389	0	43	1	
+12746	50	3	0.043	Opening Convocation		1991/92		7224	7389	0	44	1	
+12747	50	3	0.044	Play: 'The Magic Pipe'		1991/92	Play: 'The Magic Pipe'	7224	7389	0	45	1	
+12748	50	3	0.045	Play: 'Musical Comedy Murders of 1940'		1991/92	Play: 'Musical Comedy Murders of 1940'	7224	7389	0	46	1	
+12749	50	3	0.046	Athletics: Softball		1991/92		7224	7389	0	47	1	
+12750	50	3	0.047	Athletics: Nordic Skiing		1991/92		7224	7389	0	48	1	
+12751	50	3	0.048	Athletics: Track and Field		1991/92		7224	7389	0	49	1	
+12752	50	3	0.049	Athletics: Basketball - Women's		1991/92		7224	7389	0	50	1	
+12753	50	3	0.05	LEAF		1991/92	LEAF	7224	7389	0	51	1	
+12754	50	3	0.051	Athletics: Soccer - Women's		1991/92		7224	7389	0	52	1	
+12755	50	3	0.052	Athletics: Tennis - Women's		1991/92		7224	7389	0	53	1	
+12756	50	3	0.053	125th Anniversary Symposium		1991/92	125th Anniversary Symposium	7224	7389	0	54	1	
+12757	50	3	0.054	College Council		1991/92	College Council	7224	7389	0	55	1	
+12758	50	3	0.055	Fundraising - Phonathon		1991/92		7224	7389	0	56	1	
+12759	50	3	0.056	Visitors		1991/92	"includes: Charlie Byrd, Eleanor Smeal, Earl Neil, Arthur L. Caplan"	7224	7389	0	57	1	
+12760	50	3	0.057	Play: 'The Three Ways Home'		1991/92	Play: 'The Three Ways Home'	7224	7389	0	58	1	
+12761	50	3	0.058	Honored Employees		1991/92		7224	7389	0	59	1	
+12762	50	3	0.059	The Children's Theater: 'The Canterville Ghost'		1991/92	The Children's Theater: 'The Canterville Ghost'	7224	7389	0	60	1	
+12763	50	3	0.06	RA Training at Camp Iduhopi		1991/92	RA Training at Camp Iduhopi	7224	7389	0	61	1	
+12764	50	3	0.061	Winter Carnival		1991/92	Additional subjects: traying	7224	7389	0	62	1	
+12765	50	3	0.062	Play: 'Burn This'		1991/92	Play: 'Burn This'	7224	7389	0	63	1	
+12766	50	3	0.063	Women's History Meeting		1991/92	Women's History Meeting	7224	7389	0	64	1	
+12767	50	3	0.064	Visit: Sara Evans		1991/92		7224	7389	0	65	1	
+12768	50	3	0.065	'Tom Jones' Marathon Reading		1991/92	'Tom Jones' Marathon Reading	7224	7389	0	66	1	
+12769	50	3	0.066	Spring Carnival		1991/92		7224	7389	0	67	1	
+12770	50	3	0.067	Rare Books Collection		1991/92	Rare Books Collection	7224	7389	0	68	1	
+12771	50	3	0.068	Racial Injustice Rally		1991/92	Racial Injustice Rally	7224	7389	0	69	1	
+12772	50	3	0.069	Academic department: Chemistry		1991/92		7224	7389	0	70	1	
+12773	50	3	0.07	Habitat for Humanity		1991/92	Habitat for Humanity	7224	7389	0	71	1	
+12774	50	3	0.071	Honors Convocation		1991/92		7224	7389	0	72	1	
+12775	50	3	0.072	Newly Tenured Faculty		1991/92	Newly Tenured Faculty	7224	7389	0	73	1	
+12776	50	3	0.073	Laudie Porter Memorial Sundial		1991/92	Laudie Porter Memorial Sundial	7224	7389	0	74	1	
+12777	50	3	0.074	Latin American Student Organization at Sayles-Hill Food Fair		1991/92	Latin American Student Organization at Sayles-Hill Food Fair	7224	7389	0	75	1	
+12778	50	3	0.075	Mock Trial 'Date Rape'		1991/92	Mock Trial 'Date Rape'	7224	7389	0	76	1	
+12779	50	3	0.076	Peer Counselors		1991/92	Peer Counselors	7224	7389	0	77	1	
+12780	50	3	0.077	First Street Project (Johnson Hall / Alumni Guest House) construction		1991/92	First Street Project (Johnson Hall / Alumni Guest House) construction	7224	7389	0	78	1	
+12781	50	3	0.078	Student Workers (Voice Story)		1991/92	Student Workers (Voice Story)	7224	7389	0	79	1	
+12782	50	3	0.079	Kirk Jeffrey and Stephan Zweifel (teach biomedical ethics)		1991/92	Kirk Jeffrey and Stephan Zweifel (teach biomedical ethics)	7224	7389	0	80	1	
+12783	50	3	0.08	Alumni Board		1991/92	Alumni Board	7224	7389	0	81	1	
+12784	50	3	0.081	Events following the 'Rodney King' verdict		1991/92	Events following the 'Rodney King' verdict	7224	7389	0	82	1	
+12785	50	3	0.082	125th Anniversary celebrations		1991/92	125th Anniversary celebrations	7224	7389	0	83	1	
+12786	50	3	0.083	New Faculty/Staff		1991/92	New Faculty/Staff	7224	7389	0	84	1	
+12787	50	3	0.088	Broomball		1991/92	Broomball	7224	7389	0	87	1	
+29735	50	3	0.089	Student life (misc.)		1991/92		7224	7389	0	88	1	
+29737	50	3	0.09	Speakers and Visitors		1991/92	"Speakers and Visitors [Fierce Green Fire, Eric Larsen reading from new book, Locksley and Shea artworks at Libe, reception for Japan's U.S. ambassador, reception for Fay Vincent (commissioner of MLB)]"	7224	7389	0	89	1	
+29738	50	3	0.091	Presentations and Performances		1991/92	"Presentations and Performances [Jazz group in Sayles, sexual harassment forum, Southern Minn. Minority Advocates' Assoc. recognition, college council, Pride Month speakers, Mortar Board, Independent Comission News Conference]"	7224	7389	0	90	1	
+29747	50	3	0.092	"Presidential Reception, Louiville, KY"		1991/92	"Presidential Recpeption, Lousville, KY"	7224	7389	0	91	1	
+29749	50	3	0.093	Carls Abroad		1991/92	"Carls Abroad [China, Australia]"	7224	7389	0	92	1	
+95071	50	3	0.094	St. Stephen's Church		1991/92	St. Stephen's Church	7224	7389	0	93	1	41095.55721
+160417	50	3	0.095	Athletics (Misc)		1991/92	Includes Alpine skiing and hockey	7224	7389	0	94	1	41907.39065
+160420	50	3	0.096	Plays (Misc)		1991/92		7224	7389	0	95	1	41913.36413
+160421	50	3	0.097	Dormitory Floor/ Resident Halls		1991/92		7224	7389	1	96	1	41913.37206
+160422	50	5	.097/1	3rd Musser		1991/92		7224	160421	0	1	1	41913.38527
+160423	50	5	.097/2	4th Burton		1991/92		7224	160421	0	2	1	41913.38882
+160424	50	5	.097/3	First Burton		1991/92		7224	160421	0	3	1	41913.39381
+160425	50	5	.097/4	2nd Burton		1991/92		7224	160421	0	4	1	41913.39934
+160427	50	5	.097/5	3rd Myers		1991/92		7224	160421	0	5	1	41913.40367
+160428	50	5	.097/6	2nd Myers		1991/92		7224	160421	0	6	1	41913.41177
+160430	50	5	.097/7	First Watson		1991/92		7224	160421	0	7	1	41913.41559
+160431	50	5	.097/8	5th Watson		1991/92		7224	160421	0	8	1	41913.41958
+160432	50	5	.097/9	6th Watson		1991/92		7224	160421	0	9	1	41913.42309
+160433	50	5	.097/10	7th Watson		1991/92		7224	160421	0	10	1	41913.42668
+160434	50	5	.097/11	Stimson House		1991/92		7224	160421	0	11	1	41913.42896
+139952	50	3	.084a	"Yearbook (Algol) senior pictures - multi-subject, pp. 112-144"		1991/92	"Additionally: off campus study, nudity, frisbee, tunnels"	7224	7389	0	85	1	41681.62381
+139953	50	3	.084b	"Yearbook (Algol) senior pictures - multi-subject, pp. 145-167"		1991/92	Additionally: off campus study	7224	7389	0	86	1	41681.62469
+29676	50	3	0	Single Photo Groupings		1992		7224	7390	1	1	1	
+29677	50	5	.000/1	Sprained Ankle		1992	Sprained Ankle	7224	29676	0	1	1	
+29679	50	5	.000/2	Laird Hall		1992	Laird Hall	7224	29676	0	2	1	
+29680	50	5	.000/3	Japanese students planting tree		1992	Japanese students planting tree	7224	29676	0	3	1	
+29681	50	5	.000/4	Study Abroad		1992	Study Abroad	7224	29676	0	4	1	
+29682	50	5	.000/5	Bob Bonner and Student		1992	Bob Bonner and Student	7224	29676	0	5	1	
+29683	50	5	.000/6	Team Sponge		1992	Team Sponge	7224	29676	0	6	1	
+29684	50	5	.000/7	Alumni club chairs		1992	Alumni club chairs	7224	29676	0	7	1	
+29685	50	5	.000/8	Stack of books		1992	Stack of books	7224	29676	0	8	1	
+12789	50	3	0.001	Summer Institute for Teachers of Talented High School Students (ITTS)		1992		7224	7390	0	2	1	
+12790	50	3	0.002	Summer Math and Science Reasoning Program		1992	Summer Math and Science Reasoning Program	7224	7390	0	3	1	
+12791	50	3	0.003	Summer Science Program for San Antonio High Schoolers		1992	Summer Science Program for San Antonio High Schoolers	7224	7390	0	4	1	
+12792	50	3	0.004	Summer Writing Program		1992	Summer Writing Program	7224	7390	0	5	1	
+12793	50	3	0.005	Summer Chuo University Program		1992	Summer Chuo University Program	7224	7390	0	6	1	
+12794	50	3	0.006	Summer Computer Music Institute		1992	Summer Computer Music Institute	7224	7390	0	7	1	
+12795	50	3	0.007	Summer Telecommunications System Update		1992	Summer Telecommunications System Update	7224	7390	0	8	1	
+29657	50	3	0.008	Miscellaneous Art		1992	Miscellaneous Art	7224	7390	0	9	1	
+29658	50	3	0.009	Construction		1992	Construction	7224	7390	0	10	1	
+29659	50	3	0.01	Portraits		1992	Portraits	7224	7390	0	11	1	
+29661	50	3	0.011	Johnson House Clock		1992	Johnson House Clock	7224	7390	0	12	1	
+29663	50	3	0.012	Amelia Cobb Gray and Michael Tucker		1992	Amelia Cobb Gray and Michael Tucker	7224	7390	0	13	1	
+29664	50	3	0.013	Carleton College Class Agent Weekend		1992	Carleton College Class Agent Weekend	7224	7390	0	14	1	
+29666	50	3	0.014	Computer Music Institute		1992	Computer Music Institute	7224	7390	0	15	1	
+29698	50	3	0.001	Student life (misc.)		1992 (+ or - 1 year)		7224	95328	0	1	1	
+29584	50	3	0	Single Photo Groupings		1992 (+ or - 2 years)		7224	95329	1	1	1	
+29585	50	5	.000/1	Athletics: Basketball - Men's		1992 (+ or - 2 years)		7224	29584	0	1	1	
+29700	50	5	.000/2	Alcohol and drug use awareness		1992 (+ or - 2 years)	Alcohol and drug use awareness	7224	29584	0	2	1	
+29701	50	5	.000/3	Recycling		1992 (+ or - 2 years)	Recycling	7224	29584	0	3	1	
+29662	50	3	.000/.002	Athletics: Cross Country		1992 (+ or - 2 years)		7224	95329	0	2	1	
+29703	50	3	.000/.003	Writing Japanese characters		1992 (+ or - 2 years)	Writing Japanese characters	7224	95329	0	3	1	

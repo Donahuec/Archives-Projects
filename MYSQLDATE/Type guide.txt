@@ -1,0 +1,29 @@
+Type Guide:
+0-No Original Date entry (Not included in spreadsheet)
+
+1-No Change from original, should match accepted formats.
+
+2-Circa: Items that were changed and contain the keyword Circa
+
+3-Approximate Dates (Non-Circa): Items that were changed, and are related to approximate dates.
+Examples include: Before (yyyy), After (yyyy), yyyy-
+
+4-(+ or - x year(s)): items relating to the format (yyyy)(+ or minus (x)year(s))
+
+5-Extracting a year from dates: For example, if we have an original item
+such as 'February 12, 1994' the extracted data in this category will be '1994'
+
+6-Corrections/ formatting for 'Date; Date;... Date' Format: replacing commas and 
+spaces with semi-colons, etc.
+
+7-Various Format Fixes: Generally making sure there isn't extra white space, and 
+other such small format corrections
+
+8-Various Changes: Changes that either don't fit in well to a category, or 
+where done on a very specific scale
+
+9-In 'Date; Date;... Date' Format with a 'yyyy-yyyy' item included. May need changing to 'yyyy/yy'
+For instance, there might be an item '1972; 1975-1976; 1980-1985' that could be changed to '1972; 1975/76; 1980-1985'.
+These may merit glancing over by hand. Some of these items are originally from category 1 and are still in their original form.
+
+10-No Match, Need to be processed by hand

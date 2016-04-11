@@ -1,0 +1,24 @@
+Picasa photo recognition:
+
+-Were at first unsure of how to get picasa to recognize tags
+-tried looking into modifying the database directly, but that didn't work due to picasa's databse being written in a proprietary format (an also in binary)
+-Decided to pre-tag photos using exiftool
+-got onecard images with attached data sheet containing Id, first name, last name, first name at carleton, last name at carleton, class year, and the matching file name. 
+-some initial struggles, run time was very very slow, and trying to put the names in "last name, first name" format broke the facial recognitions as picasa recognized them as two separate tags. There were also struggles relating to the fact that picasa would recognize two people with the same name as one person when initially reading the tags, causing problems with some poeple's photo recognition.
+
+Now to cover some of these problems and their solutions:
+Very slow run time:
+    -the slow runtime occured for various reasons. at first we were trying to use a python script to call exiftool from the command line for each tag. This means that the command line was being called and exif tool was being opened and closed for each item. when you have 11 required tags per photo and 3833 photos, this amounts to doing that 42,163 reaallyy slow calls. To run that many with this algorithm took almost 7 hours. 
+    -The solution to this problem came in multiple parts. To avoid having to open and close exiftool for every tag and every photo instead we explred the fact that exiftool arguments can be read from a file. But there are some problems with trying to format this process correctly. For instance, one attempt ended with exiftool trying to add the tags from all of the images to every single images (it was good we were running it on a smaller set!). But with some exploration and a lot of expirimentation I found that there was a stay_open command which kept the argfile from closing, and allowed the tags for multiple images to be added to the file without having to close exiftool each time.this was done using the 'execute command' and by opening the file and writing to it with python. doing this you could open the file, write all of the command for one image, as well as the execute command, and then close the file. onece the file updates due to being closed, exiftool will automaticaly start running the new commands. In addition a few arguments were added to help speed up the process: -q, which prevents print statements (which are slow), -overwrite_original, which prevents exiftool from making a copy of the image, and -fast2, which prevents exiftool from reading all the way to the file, which is not required for tags. The edition of these solutions took the run time of the program from almost an entire workday to less than 10 minutes. 
+    -To deal with people being recognized as the same person when they had the same name, we added ID numbers to the names (So the name format is "First last ID") Since each id number is unique, this allows none of the people to cross over.
+    -If someone has a comma in their name (Such as Mike Norman, IV) The program wont tag them properly, but they will show up under unamed people in picasa so they are easy to find. This generally isn't very many people and it is easy to update their "RegionName" tag to the correct format using exiftool-- I will rewrite the program to strip comas from names before we use it again
+
+    Simply call exiftool (.\exiftool or exiftool.pl) "-RegionName=Insert correct name with no commas" pathtofile
+    you can use -overwrite_additional to prevent exiftool from making a copy of the file. 
+
+    THen you tell Picasa to read the Files, and as long as you did not already have the files loaded into picasa (if you did you will have to remove them and add them again) and it should automatially pick up the regionName as a name.
+
+    Since onecard/id images are mostly of the face, we set the face region as the whole image. 
+
+    The required tags for Picasa to recognize an image with facial recgnition are the following:
+    

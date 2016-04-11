@@ -1,0 +1,33 @@
+The folder names represent where their content needs to go, but here is a summary:
+
+in packages->collections->templates->carleton there needs to be the file csv.php
+
+in packages->collections->pub there needs to be the file csv.php 
+-this file is very minimal, it is basically a pointer to the csv.php file in the templates folder (hence why they share the same name)
+
+in packages->collections->templates there needs to be a folder named csv that should have the following contents:
+-index.inc.php
+-collection.inc.php
+-item.inc.php
+
+
+
+Finally the following modification needs to be made to controlcard.inc.php in packages->collections->templates->carleton:
+
+after line 464 (the link to the EAD output) The following needs to be inserted:
+
+<!--               CSV-->
+               <a href='?p=collections/csv&amp;id=<?php echo($objCollection->ID); ?>&amp;templateset=csv&amp;disabletheme=1&amp;output=<?php echo($objCollection->getString('SortTitle', 0, false, false)); ?>'>CSV</a><br/>
+
+
+Additional notes:
+
+if you decide to share this with others they will need to make the following modifications:
+
+in packages->collections->templates->csv two files need to be updated:
+
+-in item.inc.php lines 26 and 86 will need to be modified to remove the dateadded fields. how to do this is marked in the comments
+-in collection.inc.php dateadded will need to be removed from the title fields. This is also marked in the comments.
+
+in packages->collections->pub one file will need modification
+--in the csv.php file the include function on line 12 will need to be modified to represent the template that the user is using.
