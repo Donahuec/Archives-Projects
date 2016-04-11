@@ -1,0 +1,11 @@
+----------------------------------------------------------------
+---------------Search Term Analytics----------------------------
+----------------------------------------------------------------
+
+Files: 
+-->Analytics_Carleton_College_Archives_Pages_20140620-20150720.csv
+	- This file lists all of the pages that have been accesed by link. It gives the number of pageviews they have recieved, the unique pageviews (by different ip adresses?), The Average Time (spent on the page?), Entrances, Bounce Rate, and % Exit.
+
+
+-->Analytics_Carleton_College_Archives_Search_Terms_20140620-20150720.csv
+	-  This file contains a list of all the terms that have been searched. It gives the number of times each term has been searched, The number of results that were viewd per search, % Search Exits, % Search Refinements, Time after search, and Average Search depth.
