@@ -2,10 +2,55 @@
 ---------------Search Term Analytics----------------------------
 ----------------------------------------------------------------
 
-Files: 
--->Analytics_Carleton_College_Archives_Pages_20140620-20150720.csv
+----Files:--------- 
+-->Analytics_Carleton_College_Archives_Pages_20140620-20150720.csv (Pages)
 	- This file lists all of the pages that have been accesed by link. It gives the number of pageviews they have recieved, the unique pageviews (by different ip adresses?), The Average Time (spent on the page?), Entrances, Bounce Rate, and % Exit.
 
 
--->Analytics_Carleton_College_Archives_Search_Terms_20140620-20150720.csv
+-->Analytics_Carleton_College_Archives_Search_Terms_20140620-20150720.csv (Search Terms)
 	-  This file contains a list of all the terms that have been searched. It gives the number of times each term has been searched, The number of results that were viewd per search, % Search Exits, % Search Refinements, Time after search, and Average Search depth.
+
+
+----Process so far:-----------------
+
+-Ran st_cleanup.py on the Search terms CSV. st_cleanup must be run with python 2. This took any search terms with the same title and combined them and their statistics into one item. 
+
+-Used Google Open-Refine (https://github.com/OpenRefine) to work through leftover cleanup
+	-Use refine to group similar words, and can than go through and rename fields to have the same name. Slowly we can combine all similar categories (which may have varied by capitalization, typoes, extra details, etc). We can also remove items that are bad inputs, or likely to be searches by people in archives. Then we can save our CSV file, and run it through st_cleanup again to combine these into single lines. 
+
+-Next I made an excel sheet where I ordered the search terms by total unique searches, then grouped and color coded them bu blocks of similare amounts of searches. 
+
+This process (when running st_cleanup.py on it again afterwards to combine the newly renamed fields) narrowed down the number of terms from 4352 terms to 1676 terms.
+
+
+----About Open Refine:-----------------
+
+Github: https://github.com/OpenRefine/OpenRefine
+Download: https://github.com/OpenRefine/OpenRefine/releases
+
+Download the OpenRefine and extract it to a safe loation. Find and run openrefine.exe. This should run open refine in your browser. 
+
+ On the starting page you can open a file from your computer to start a new project. choose your file and hit next. This will open a configuration page.
+
+ The initial configuration provided by OpenRefine is sufficient for the search Term CSV. Name your project and hit Create Project in the upper right corner.
+
+Click on the Drop down arrow by 'Search Term', go to Facet, and then Text Facet. This will bring up a facet section on the left side of the page. You may have to increase the maximum size for it to work. Next, Click the button 'Cluster' on the upper right side of the box. This will bring up the "Cluster & Edit Column." Here is where the majority of our work will be done.
+
+Scroll through the list, and Click the 'Merge?' checkbox and change the 'New Cell Value' to the correct value. Do this for every set that contains all items that are the essentially the same search term, and then click 'Merge Selected and Re-Cluster'. REpeat this process until there are no more values that are the same. Then expiriment with various different methods and parameters (found above the table int the Cluster and Edit Column Window), repeating the process for each one until the list of Search terms seems sufficiently narrowed down. 
+
+--I also changed any values that were only numbers to 'Numeric,' as they were most likely searches done by Archives employees. I also changed inputs that did not make any sense or were obviously errors to 'Bad Input'. Finally I changed searches for class years to "Class of ----", to combine them into one term.
+
+--Before working with the Cluster and Edit, you can also search the csv in open refine, and look for patterns to remove (using the search term -> text filter function and the search term -> numeric facet function), such as quotations around values, or entirely numeric values. I would suggest expirimenting with the program on your own, and seeing if there are any other ways to speed up the process.
+
+----Analysis of process----------------
+
+This process did a good job of narrowing down the search terms, but still has room for improvement. Working with combining things using OpeRefine was still a relatively slow process, and it is possible that more of it could be automated. The trouble is there is so much variance in user searches, especcially with errors like typos, or searches that mean the same thing, but with different words (i.e. searching for someone with only their last name versus their full name), that it is difficult to fully automate the process without human review. 
+
+
+
+
+
+
+---Pages:--------------
+-I have yet to do any work on page analysis.
+
