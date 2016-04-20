@@ -1,0 +1,41 @@
+Table Format:
+
+New ID, OLD ID Number, Title, Description, Architect, Date, Type, Notes
+
+Need to combine rows with same 'New ID'. Concatenate values that are different for everything but 'OLD ID Number'.
+
+Concatenate in format: 'Value 1. Value 2. Value 3.'
+
+
+Process:
+-Put in CSV, use python csv reader
+-create dictionary Of Dictionaries. 
+	-each internal dictionary contains all of the required values (in arrays). 
+-loop through lines in CSV, and put the values into the Dictionaries if their arrays do not already contain that value. 
+-Create new CSV, populate it with values, concatenating items in Dictionaries. 
+
+
+
+CSV SYNTAX::
+
+import csv
+
+with open(self.extractionFile, "rb") as ef:
+            dataReader = csv.reader(ef, delimiter=',' , quotechar='"')
+            for row in dataReader:
+                self.fileData.append(row)
+
+def writeCSV(self, data, suffix):
+    """ Writes the data with the extracted time stamps to a new csv file"""
+    toUse = []
+    if data == "nw":
+        toUse = self.needsWork
+    elif data == "ud":
+        toUse = self.updatedData
+    temp = os.path.basename(self.extractionFile).replace(".csv", "") 
+    outFile = os.path.join( self.saveFilePath, temp + suffix + ".csv")
+    with open(outFile, "wb") as f:
+        writer = csv.writer(f, delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL)
+        for row in toUse:
+            writer.writerow(row)
+
