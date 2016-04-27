@@ -139,6 +139,22 @@ CONTAINS FUNCTION dbStorContentURLFiles()
 
 
 
+Steps:
+	x-Create Buttons 
+		x-one in content (run on one item)
+		x-two in collections: run on this collection, run on all items
+	OR
+	*-Create Field on database management tab --> C:\xampp\htdocs\packages\core\admin\database.php
+		-Dropdown menu to choose All, Collection, Content  -> text field to input id number (pops up?)
+
+	-Create Page that it goes to (check if buttons work + exit button)
+	-Write methods for single item update.
+	-Write methods for collection update
+	-Write methods for All update
+
+
+
+
 
 
 

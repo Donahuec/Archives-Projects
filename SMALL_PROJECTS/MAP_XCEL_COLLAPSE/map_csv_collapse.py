@@ -11,22 +11,25 @@ class CSVCollapse:
 
 	""" Run the program """
 	def run(self):
-		readCSV()
+		print("Start")
+		self.readCSV()
 		for item in self.fileData:
-			addToDictionary(row)
+			self.addToDictionary(item)
 		self.finalData.append(["ID", "Title", "Description", "Architect",
 				"Date", "Type", "Notes"])
 		for row in self.idDictionary:
-			writeFinalList(row)
-		writeCSV()	
+			self.writeFinalList(row)
+		#print(self.finalData)
+		self.writeCSV()	
 
 	""" Reads the CSV from collapseFile,
 	 returns Error if file does not exist.
 	 Puts rows into self.fileData, as a list of lists """
 	def readCSV(self):
 		try:
-			with open(self.originalFile, "rb") as file:
+			with open(self.originalFile, "r") as file:
 				dataReader = csv.reader(file, delimiter = ',', quotechar = '"')
+				next(dataReader, None)
 				for row in dataReader:
 					self.fileData.append(row)
 		except IOError:
@@ -76,22 +79,53 @@ class CSVCollapse:
 	""" For all of the items in self.idDictionary, make the array for each 
 		item so that is can be put in the csv """
 	def writeFinalList(self, row):
-		#stuff 
+		data = self.idDictionary[row]
+		arr = [row, self.concatValue(data['Title']), self.concatValue(data['Description']),
+				self.concatValue(data['Architect']), self.concatValue(data['Date']),
+				self.concatValue(data['Type']), self.concatValue(data['Notes'])]
+		self.finalData.append(arr)
+
 
 	""" Takes a list of values and concatenates them in the format
 		'value 1. value 2. value 3.' --> always end in period unless one already exists"""
 	def concatValue(self, values):
-		#stuff
+		final = ""
+		for item in values:
+			if item.endswith("."):
+				final += item + " "
+			else:
+				final += item + ". "
+
+		while final.endswith(" "):
+			final = final[:-1]
+
+		return final
 
 
 	""" Writes a CSV file from the data in self.idDictionary unless otherwise specified
 		the name of the new file will be the same as the old with '_collapsed' attached 
 		+ a number if it already exists."""
 	def writeCSV(self):
-		#stuff
+		outfile = "TAP_collapsed.csv"
+		try:
+			with open(outfile, "w", newline = '') as f:
+				writer = csv.writer(f, delimiter=",", quotechar='"', quoting=csv.QUOTE_ALL)
+				for row in self.finalData:
+					#print(row)
+					writer.writerow(row)
+		except:
+			print("Failed to write file")
+			sys.exit()
+
+		print("Completed")
 
 	
 
 def main():
-	#stuff
+	path = "TAP_ORIG.csv"
+
+	r = CSVCollapse(path)
+	r.run()
+
+main()
 

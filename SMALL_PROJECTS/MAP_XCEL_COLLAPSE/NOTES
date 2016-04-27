@@ -39,3 +39,11 @@ def writeCSV(self, data, suffix):
         for row in toUse:
             writer.writerow(row)
 
+
+
+
+["ID", "Title", "Description", "Architect",
+                "Date", "Type", "Notes"]
+
+                {'Title' : [], 'Description': [], 
+                    'Architect' : [], 'Date' : [], 'Type' : [], 'Notes' : []}
