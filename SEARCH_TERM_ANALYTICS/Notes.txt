@@ -52,4 +52,27 @@ This process did a good job of narrowing down the search terms, but still has ro
 
 
 ---Pages:--------------
--I have yet to do any work on page analysis.
+The pages file has useful information, yet is hard to glean information from in its raw form because the URLs themselves are of little value just scrolling through. There are three methods I have come up with to get information from archivedb URLs.
+
+1. Direct HTML Lookup
+Running the program title_fetcher.py went through the list of URLs and downloaded the HTML of each page.  Using BeautifulSoup it was easy to extract the title of the page and format it to a very readable format.  This was slow in execution and limited in its scope, but may still be a useful tools in some circumstances.  Note: BeautifulSoup is a module that needs to be installed.  There are many platform-specific instructions online to installing it.
+
+2. Indirect Database Querying
+First I downloaded the most significant tables from archivedb.carleton.edu/pma.  We decided not to focus on Digital Content because we are looking to see if there are things that should be digitized but are not.  Additionally, many of the URLs were from the search, but the above processing already covered the search terms.  The tables I downloaded were tblCollections_Collections, tblCollections_Content, and tblAccessions_Accessions.  Running page_titles.py with these files I compiled a list of 967 webpages with stats about page views and content.
+
+3. Direct Database Querying 
+I attempted to connect directly to the database using the script dbquery.py.  I concluded that the module required does not connect to the older version of MySQL used by archivedb.  This approach would be best (as it could be the most automated), however I still have to work out how it can be done.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
