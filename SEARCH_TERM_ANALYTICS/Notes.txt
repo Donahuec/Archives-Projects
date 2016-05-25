@@ -63,12 +63,9 @@ First I downloaded the most significant tables from archivedb.carleton.edu/pma. 
 3. Direct Database Querying 
 I attempted to connect directly to the database using the script dbquery.py.  I concluded that the module required does not connect to the older version of MySQL used by archivedb.  This approach would be best (as it could be the most automated), however I still have to work out how it can be done.
 
+After compiling all of the URLs with their page descriptions I found many duplicate pages with different URLs. To condense these pages to the same item, I made a dictionary using the IDs as each key and then outputted a new file, Pages_Output_Condensed.csv with the new values.  Pageviews and Unique Pageviews were added together to give more realistic representations of the data. 
 
-
-
-
-
-
+Looking further at the URLs visited we realized that specific collection content pages (collections/findingaid) were not being recorded by Google Analytics. Further analysis of these pages will therefore be tabled until more results come in.
 
 
 

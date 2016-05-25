@@ -13,7 +13,11 @@ class PageLookup:
         # Helpful if datafiles are sorted in ascending order with a header row
         self.collectionsFile = open("tables/tblCollections_Collections.csv", 'rU')
         self.accessionsFile = open("tables/tblAccessions_Accessions.csv", 'rU')
-        self.outFile = open("Pages_Output.csv", 'wb')
+        self.outFile = open("Pages_Output_Condensed.csv", 'wb')
+
+        # The output dictionary uses the ID as the key and therefore combines
+        # URLs that are different but go to the same page.
+        self.output = {}
 
     def readFile(self):
         # Initialize readers and writers
@@ -42,7 +46,6 @@ class PageLookup:
         for row in readFile:
             if "collections/controlcard" in row[0]:
                 idNum = re.search('id=(\d*)', row[0]).group(1)
-                print idNum
                 try:
                     title = collections[idNum][5]
                     date = collections[idNum][7]
@@ -52,10 +55,21 @@ class PageLookup:
                     title = "COLLECTION ID NOT FOUND"
                     date = "Not Found"
                     scope = "Not Found"
-                writeData.writerow([row[0], row[1], row[2], title, date, scope, row[3], row[4], row[6]])
+
+                # TODO: Make this a separate method. Add percentage processing.
+                if idNum in self.output.keys():
+                    # Uncomment this line to have it list all of the URLs with the same ID in column A
+                    # self.output[idNum][0] += ", " + row[0]
+                    self.output[idNum][1] = str(int(self.output[idNum][1]) + int(row[1]))
+                    self.output[idNum][2] = str(int(self.output[idNum][2]) + int(row[2]))
+                else:
+                    self.output[idNum] = [row[0], row[1], row[2], title, date, scope, row[3], row[4], row[6]]
+
+                # Uncomment for writing uncombined output to a file
+                # writeData.writerow([row[0], row[1], row[2], title, date, scope, row[3], row[4], row[6]])
+
             elif "accessions/accession" in row[0]:
                 idNum = re.search('id=(\d*)', row[0]).group(1)
-                print idNum
                 try:
                     title = accessions[idNum][3]
                     date = accessions[idNum][5]
@@ -65,11 +79,27 @@ class PageLookup:
                     title = "ID NOT FOUND"
                     date = "Not Found"
                     scope = "Not Found"
-                writeData.writerow([row[0], row[1], row[2], title, date, scope, row[3], row[4], row[6]])
+
+                # TODO: Make same method mentioned above.
+                if idNum in self.output.keys():
+                    # Uncomment this line to have it list all of the URLs
+                    # self.output[idNum][0] += ", " + row[0]
+                    self.output[idNum][1] = str(int(self.output[idNum][1]) + int(row[1]))
+                    self.output[idNum][2] = str(int(self.output[idNum][2]) + int(row[2]))
+                else:
+                    self.output[idNum] = [row[0], row[1], row[2], title, date, scope, row[3], row[4], row[6]]
+                # Uncomment for writing uncombined output to a file
+                # writeData.writerow([row[0], row[1], row[2], title, date, scope, row[3], row[4], row[6]])
+
+        # Write the self.output dictionary to csv file
+        for key, value in self.output.iteritems():
+            writeData.writerow(value)
+        self.outFile.close()
+
 
 
 def main():
-    if (len(sys.argv) < 2) or (len(sys.argv) > 3):
+    if (len(sys.argv) != 2):
         f = "Analytics_Carleton_College_Archives_Pages_20140620-20150720.csv"
         print "Running on file \"%s\"" %(f)
         lookerUpper = PageLookup(f)
