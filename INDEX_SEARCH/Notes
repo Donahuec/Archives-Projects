@@ -140,10 +140,6 @@ CONTAINS FUNCTION dbStorContentURLFiles()
 
 
 Steps:
-	x-Create Buttons 
-		x-one in content (run on one item)
-		x-two in collections: run on this collection, run on all items
-	OR
 	*-Create Field on database management tab --> C:\xampp\htdocs\packages\core\admin\database.php
 		-Dropdown menu to choose All, Collection, Content  -> text field to input id number (pops up?)
 
@@ -151,6 +147,28 @@ Steps:
 	-Write methods for single item update.
 	-Write methods for collection update
 	-Write methods for All update
+
+
+	--> pull information from from Archon data array instead of queries
+	--> Automatically run upon updating an item.
+
+----------------------------------FINAL NOTES---------------------------------------------
+
+	\packages\core\admin\database.php --> This is where the dialog setup is done
+	places of interest:
+	database_ui_dialog_index_search()
+	lines 542-615
+
+	for more understanding of how the dialog gets set up, take a look at 
+	packages\core\js\admin.js
+	--->admin_ui_opendialog
+
+	what needs to be done from here:
+	set up the dialog so that it asks the user for either a content id, or a collection id
+	(or nothing) depending on what they chose when opening the dialog
+
+
+
 
 
 
