@@ -1,0 +1,24 @@
+Search Term Analysis
+Updated Process
+
+
+----- Intro -----
+
+Following up with the work outlined in Notes.txt, here I go through an updated approach to analysing the data from a year's worth of search terms.
+
+
+
+----- Getting the Data -----
+
+- Go to Google Analytics for the Carleton Archives
+- In the left menu bar, click Behavior -> Site Search -> Search Terms
+- At the top right of the page select the desired time frame (I did data for one year)
+- At the bottom right of the page click the Show rows drop down and select 5000
+- Back at the top of the page under the title Search Terms, click Export and then CSV
+- If there are more results than 5000, go to the next page of results and export again
+- Combine results into a single CSV file using excel  
+
+
+----- Cleaning the Data -----
+
+- Run st_cleanup.py on the CSV file

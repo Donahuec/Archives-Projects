@@ -1,15 +1,30 @@
+# ***************************************************************************
+# st_cleanup.py
+# Summer 2016
+# Caleb Braun and Caitlin Donahue
+#
+# Takes in a CSV file of Google Analytics search term data and processes it.
+# Removes internal searches (searches by ID) and combines duplicates.
+#
+# ***************************************************************************
+
 import os
 import sys
-import datetime
 import csv
-import codecs
-import cStringIO
-import errno
 
 class SearchTermCleanser:
     def __init__ (self, fileName):
-        self.inputFile = fileName
-        self.outputFile =  open("Search_Term_Output.csv", 'wb')
+        try:
+            self.inputFile = open(fileName, 'rU')
+        except:
+            print("Invalid file name!")
+            exit(0)
+        # Makes this program compatable with Python 2 or 3
+        if sys.version_info[0] < 3:
+            self.outputFile =  open("test_out.csv", 'wb')
+        else:
+            self.outputFile =  open("test_out.csv", 'w')
+
         self.csvOutput = csv.writer(self.outputFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         self.rowDict = {}
         self.header = []
@@ -23,24 +38,23 @@ class SearchTermCleanser:
         self.processCSV()
 
 
-
     def parseCSV(self):
         """ Parses the original csv into a Dictionary"""
-        with open(self.inputFile, 'rb') as f:
-            readFile = csv.reader(f, delimiter=',', quotechar='"')
-            self.header = readFile.next()
+        readFile = csv.reader(self.inputFile, delimiter=',', quotechar='"')
+        self.header = next(readFile)
 
-            #for each line in file, check if in dictionary
-            #if not, add new key to dictionary
-            #append value to key's list
-            for row in readFile:
-                if row[0] in self.rowDict:
-                    self.rowDict[row[0]].append(row)
+        #for each line in file, check if in dictionary
+        #if not, add new key to dictionary
+        #append value to key's list
+        for row in readFile:
+            # Have a consistent format for all search terms
+            row[0] = self.homogenize(row[0])
 
-                else:
-                    self.rowDict[row[0]] = []
-                    self.rowDict[row[0]].append(row)
-
+            if row[0] in self.rowDict:
+                self.rowDict[row[0]].append(row)
+            else:
+                self.rowDict[row[0]] = []
+                self.rowDict[row[0]].append(row)
 
 
     def processCSV(self):
@@ -49,120 +63,101 @@ class SearchTermCleanser:
             lst = self.rowDict[key]
             row = []
 
+            valid = self.testSearchValidity(lst[0][0])
+
+            # If there are no double entries
             if (len(lst) == 1):
                 row = lst[0]
 
             else:
-                #Search Term (key)
                 searchTerm = key
+                uniqueSearches = self.addResults(lst, 1)
+                pageviews = self.averageResults(lst, 2)
+                searchExits = str(self.averageResults(lst, 3)) + "%"
+                searchRefinements = str(self.averageResults(lst, 4)) + "%"
+                timeAfterSearch = self.averageTimeAfterSearch(lst)
+                searchDepth = self.averageResults(lst, 6)
 
-                #Total unique searches
-                uniqueSearches = self.AddTotalUniqueSearches(lst)
+                row = [searchTerm, uniqueSearches, pageviews, searchExits, searchRefinements, timeAfterSearch, searchDepth]
 
-                #results pageviews/search
-                results = self.AverageResults(lst)
-
-                #%search exits
-                searchExits = ""
-                for i in lst:
-                    searchExits = searchExits + i[3] + ": "
-                searchExits = searchExits[:-2]
-
-                #%search refinements
-                searchRefinements = ""
-                for i in lst:
-                    searchRefinements = searchRefinements + i[4] + ": "
-                searchRefinements = searchRefinements[:-2]
-
-                #time after search
-                timeAfterSearch = self.AverageTimeAfterSearch(lst)
-
-                #average search depth
-                searchDepth = self.AverageSearchDepth(lst)
-
-                row = [searchTerm, uniqueSearches, results, searchExits, searchRefinements, timeAfterSearch, searchDepth]
-
-            self.csvOutput.writerow(row)
+            if valid:
+                self.csvOutput.writerow(row)
+            # else:
+            #     print(row[0])
 
 
 
-    def add(self, lst, index):
+    def addResults(self, lst, index):
         total = 0
         for i in lst:
             num = i[index]
-            convertedNum = 0
             try:
-                convertedNum = int(num)
+                total += int(num)
             except:
-                convertedNum = 1
-            total += convertedNum
+                print("Error parsing number: %s" % (i[index]))
         return total
 
 
+    def averageResults(self, lst, index):
+        """ Calculates the average number of results based on all searches """
+        weightedAvg = 0.0
+        numSearches = 0
 
-    def AddTotalUniqueSearches(self, lst):
-        """Adds up the Total Unique Searches for a row """
-        return self.add(lst, 1)
-
-
-
-
-
-    def AverageResults(self, lst):
-        """ Calculates the average number of results per pageview """
-        length = len(lst)
-        total = self.add(lst, 2)
-        return total / length
-
-
-
-    def AverageTimeAfterSearch(self, lst):
-        """ Calculates the average time after search """
-        seconds = 0
-        minutes = 0
-        hours = 0
-        length = len(lst)
         for i in lst:
-            strSeconds = i[5][5:7]
-            strMinutes = i[5][2:4]
-            strHours = i[5][0:1]
-            try:
-                seconds += int(strSeconds)
-            except:
-                seconds += 0
-            try:
-                minutes += int(strMinutes)
-            except:
-                minutes += 0
-            try:
-                hours += int(strHours)
-            except:
-                hours += 0
-        seconds = seconds / length
-        minutes = minutes / length
-        hours = hours / length
-        while (seconds >= 60):
-            seconds -= 60
-            minutes += 1
-        while (minutes >= 60):
-            minutes -= 60
-            hours += 1
-        time = "%02d:%02d:%02d" % (hours, minutes, seconds,)
+            weight = int(i[1])
+            value = float(i[index].replace("%", ""))
+            numSearches += weight
+            weightedAvg += value * weight
+
+        weightedAvg /= numSearches
+        weightedAvg = round(weightedAvg, 2)
+        return weightedAvg
+
+
+    def averageTimeAfterSearch(self, lst):
+        """ Calculates the average time after search """
+        totalSeconds = 0
+        numSearches = 0
+
+        for i in lst:
+            weight = int(i[1])
+            numSearches += weight
+            strHours, strMinutes, strSeconds = i[5].split(":")
+            totalSeconds += int(strSeconds) * weight
+            totalSeconds += int(strMinutes) * weight * 60
+            totalSeconds += int(strHours) * weight * 3600
+
+        totalSeconds /= numSearches
+        minutes, seconds = divmod(totalSeconds, 60)
+        hours, minutes = divmod(minutes, 60)
+
+        time = "%02d:%02d:%02d" % (hours, minutes, seconds)
         return time
 
 
+    def homogenize(self, st):
+        """ Standardizes capitalisation and removes surrounding quotes """
+        st = st.title()
+        if st.startswith('"') and st.endswith('"'):
+            st = st[1:-1]
+        return st
 
-    def AverageSearchDepth(self, lst):
-        """ Calculates the average search depth """
-        length = len(lst)
-        total = self.add(lst, 6)
-        return total / length
 
+    def testSearchValidity(self, searchTerm):
+        """ Determines whether search term was useful """
+        if searchTerm.isdigit():            # Search term is an ID number
+            return False
+        elif searchTerm.count('/') > 1:     # Search term is a specific date
+            return False
+        elif '_' in searchTerm:             # Search term is an ID
+            return False
+        else:
+            return True
 
 
 def main():
     if (len(sys.argv) < 2) or (len(sys.argv) > 3):
-        print "Invalid number of Arguments"
+        print("Invalid number of arguments! Please enter a file name.")
     else:
         stc = SearchTermCleanser(sys.argv[1])
         stc.run()

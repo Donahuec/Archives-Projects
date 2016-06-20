@@ -44,7 +44,7 @@ Scroll through the list, and Click the 'Merge?' checkbox and change the 'New Cel
 
 ----Analysis of process----------------
 
-This process did a good job of narrowing down the search terms, but still has room for improvement. Working with combining things using OpeRefine was still a relatively slow process, and it is possible that more of it could be automated. The trouble is there is so much variance in user searches, especially with errors like typos, or searches that mean the same thing, but with different words (i.e. searching for someone with only their last name versus their full name), that it is difficult to fully automate the process without human review. 
+This process did a good job of narrowing down the search terms, but still has room for improvement. Working with combining things using OpenRefine was still a relatively slow process, and it is possible that more of it could be automated. The trouble is there is so much variance in user searches, especially with errors like typos, or searches that mean the same thing, but with different words (i.e. searching for someone with only their last name versus their full name), that it is difficult to fully automate the process without human review. 
 
 
 
