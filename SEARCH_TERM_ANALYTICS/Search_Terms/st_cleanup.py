@@ -13,17 +13,19 @@ import sys
 import csv
 
 class SearchTermCleanser:
-    def __init__ (self, fileName):
+    def __init__ (self, fileName, fileOut = "default.csv"):
         try:
             self.inputFile = open(fileName, 'rU')
         except:
             print("Invalid file name!")
             exit(0)
+
+        print("Creating output file " + fileOut)
         # Makes this program compatable with Python 2 or 3
         if sys.version_info[0] < 3:
-            self.outputFile =  open("test_out.csv", 'wb')
+            self.outputFile =  open(fileOut, 'wb')
         else:
-            self.outputFile =  open("test_out.csv", 'w')
+            self.outputFile =  open(fileOut, 'w')
 
         self.csvOutput = csv.writer(self.outputFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         self.rowDict = {}
@@ -34,41 +36,43 @@ class SearchTermCleanser:
     def run(self):
         """ Runs the program """
         self.parseCSV()
+        print("Writing header")
         self.csvOutput.writerow(self.header)
+        print("Writing output...")
         self.processCSV()
+        print("Finished!")
 
 
     def parseCSV(self):
         """ Parses the original csv into a Dictionary"""
         readFile = csv.reader(self.inputFile, delimiter=',', quotechar='"')
         self.header = next(readFile)
+        if len(self.header) < 8: self.header.append("Alternate Spellings")
 
-        #for each line in file, check if in dictionary
-        #if not, add new key to dictionary
-        #append value to key's list
+        # for each line in file, check if in dictionary
+        # if not, add new key to dictionary
+        # append value to key's list
         for row in readFile:
             # Have a consistent format for all search terms
             row[0] = self.homogenize(row[0])
+            if len(row) < 8: row.append(0)
 
             if row[0] in self.rowDict:
                 self.rowDict[row[0]].append(row)
             else:
-                self.rowDict[row[0]] = []
-                self.rowDict[row[0]].append(row)
+                self.rowDict[row[0]] = [row]
 
 
     def processCSV(self):
-        """ Runs functions to process the input CSV into the Output CSV """
+        """ Runs functions to process the input CSV into the output CSV """
         for key in self.rowDict:
             lst = self.rowDict[key]
+            valid = self.testSearchValidity(lst[0][0])
             row = []
 
-            valid = self.testSearchValidity(lst[0][0])
-
-            # If there are no double entries
+            # If there are no double entries in the row dictionary
             if (len(lst) == 1):
                 row = lst[0]
-
             else:
                 searchTerm = key
                 uniqueSearches = self.addResults(lst, 1)
@@ -77,13 +81,12 @@ class SearchTermCleanser:
                 searchRefinements = str(self.averageResults(lst, 4)) + "%"
                 timeAfterSearch = self.averageTimeAfterSearch(lst)
                 searchDepth = self.averageResults(lst, 6)
+                altSpellings = self.addResults(lst, 7) + len(lst) - 1
 
-                row = [searchTerm, uniqueSearches, pageviews, searchExits, searchRefinements, timeAfterSearch, searchDepth]
+                row = [searchTerm, uniqueSearches, pageviews, searchExits, searchRefinements, timeAfterSearch, searchDepth, altSpellings]
 
             if valid:
                 self.csvOutput.writerow(row)
-            # else:
-            #     print(row[0])
 
 
 
@@ -140,6 +143,9 @@ class SearchTermCleanser:
         st = st.title()
         if st.startswith('"') and st.endswith('"'):
             st = st[1:-1]
+        if "'S" in st:
+            st = st.replace("'S", "'s")
+        st = st.replace("\\", "")   # A common search error
         return st
 
 
@@ -156,10 +162,16 @@ class SearchTermCleanser:
 
 
 def main():
-    if (len(sys.argv) < 2) or (len(sys.argv) > 3):
-        print("Invalid number of arguments! Please enter a file name.")
-    else:
+    if len(sys.argv) == 2:
         stc = SearchTermCleanser(sys.argv[1])
-        stc.run()
+    elif len(sys.argv) == 4 and sys.argv[2] == "-o":
+        stc = SearchTermCleanser(sys.argv[1], sys.argv[3])
+    else:
+        print("Invalid arguments! Usage: ")
+        print("st_cleanup.py <file> [-o <file>]")
+        exit(0)
+
+    print("Parsing " + sys.argv[1] + "...")
+    stc.run()
 
 main()

@@ -10,15 +10,29 @@ Following up with the work outlined in Notes.txt, here I go through an updated a
 
 ----- Getting the Data -----
 
-- Go to Google Analytics for the Carleton Archives
+- Go to Google Analytics and get data from "Carleton College Archives, filtered"
 - In the left menu bar, click Behavior -> Site Search -> Search Terms
 - At the top right of the page select the desired time frame (I did data for one year)
 - At the bottom right of the page click the Show rows drop down and select 5000
 - Back at the top of the page under the title Search Terms, click Export and then CSV
 - If there are more results than 5000, go to the next page of results and export again
 - Combine results into a single CSV file using excel  
+- Open the file and delete the boilerplate header code and summary data at the bottom
 
 
 ----- Cleaning the Data -----
 
 - Run st_cleanup.py on the CSV file
+- Upload the cleaned file to a new project in OpenRefine
+- Use OpenRefine to combine terms that refer to the same concept
+- Details on how to do this are documented in Notes.txt
+- To speed up the process focus on the terms that were searched for more often
+- Once the dataset seems decently simplified, export it as a CSV
+- Run st_cleanup.py on it again to combine all of the duplicate terms 
+
+
+----- Analyzing the Data -----
+
+- Focus mainly on the top ~30 terms (sorted by Total Unique Searches)
+- 
+
