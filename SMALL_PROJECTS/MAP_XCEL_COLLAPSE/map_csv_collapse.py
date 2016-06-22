@@ -122,7 +122,7 @@ class CSVCollapse:
 	
 
 def main():
-	path = "TAP_ORIG.csv"
+	path = "TelecommArchPlanscsv.csv"
 
 	r = CSVCollapse(path)
 	r.run()
