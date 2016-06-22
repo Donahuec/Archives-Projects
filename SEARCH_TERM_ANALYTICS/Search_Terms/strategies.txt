@@ -1,0 +1,57 @@
+Search Term Analysis
+6/21/16
+
+
+==========================
+ Data Analysis Strategies
+==========================
+
+
+** Total Unique Searches **
+
+- Most obvious, the terms people searched for the most should come up with good results
+- Maybe over a certain threshold review to make sure there's good content, keywords, etc.
+
+
+** Bounce Rate **
+
+- See how many people leave the site right after searching
+- Also useful to look at particularly low %Search Exits to determine why they're good
+- High number here pretty significant
+
+
+** Search Refinements **
+
+- %Search Refinements is a useful metric for finding terms that are not resulting in hits
+- Can refer to the original (unrefined) data to see common mispellings, etc.
+- Go through those pages to add keywords
+- Question: Refining terms loses data ('arb' data might be worse than 'Arboretum'), is it worth keeping track of this? I'm regretting not tracking how many combinations each term has in a new column.
+
+
+** Results Viewed per Search **
+
+- Find out if this is significant
+- A high Results Pageviews / Search could imply they found a lot of useful pages or none
+
+
+** Time **
+
+- I'm not sure how much use this is by itself, but is useful to compare to other stats
+- For example, a high time but low search depth means a long time spent on one page
+- Get a sense of what a high/low Time After Search value is by finding the average
+
+
+** Going Deep **
+
+- The Average Search Depth shows how many pages people go after using the search
+- A low search depth indicates an immediate hit or exit
+- A high search depth means that there is a lot of content they are viewing
+- It would be useful to figure out what counts as a page view after searching. Do photos?
+
+
+** Overall **
+
+- Focus on a subset of data (over 5 unique searches?)
+- Look into the tools built into Google Analytics
+- Find site averages and use them as a baseline for a search's specific stats
+- Is it possible to add a "Did you mean <correct spelling>?" message?

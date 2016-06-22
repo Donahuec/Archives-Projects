@@ -44,7 +44,7 @@ Scroll through the list, and Click the 'Merge?' checkbox and change the 'New Cel
 
 ----Analysis of process----------------
 
-This process did a good job of narrowing down the search terms, but still has room for improvement. Working with combining things using OpeRefine was still a relatively slow process, and it is possible that more of it could be automated. The trouble is there is so much variance in user searches, especially with errors like typos, or searches that mean the same thing, but with different words (i.e. searching for someone with only their last name versus their full name), that it is difficult to fully automate the process without human review. 
+This process did a good job of narrowing down the search terms, but still has room for improvement. Working with combining things using OpenRefine was still a relatively slow process, and it is possible that more of it could be automated. The trouble is there is so much variance in user searches, especially with errors like typos, or searches that mean the same thing, but with different words (i.e. searching for someone with only their last name versus their full name), that it is difficult to fully automate the process without human review. 
 
 
 
@@ -52,4 +52,24 @@ This process did a good job of narrowing down the search terms, but still has ro
 
 
 ---Pages:--------------
--I have yet to do any work on page analysis.
+The pages file has useful information, yet is hard to glean information from in its raw form because the URLs themselves are of little value just scrolling through. There are three methods I have come up with to get information from archivedb URLs.
+
+1. Direct HTML Lookup
+Running the program title_fetcher.py went through the list of URLs and downloaded the HTML of each page.  Using BeautifulSoup it was easy to extract the title of the page and format it to a very readable format.  This was slow in execution and limited in its scope, but may still be a useful tools in some circumstances.  Note: BeautifulSoup is a module that needs to be installed.  There are many platform-specific instructions online to installing it.
+
+2. Indirect Database Querying
+First I downloaded the most significant tables from archivedb.carleton.edu/pma.  We decided not to focus on Digital Content because we are looking to see if there are things that should be digitized but are not.  Additionally, many of the URLs were from the search, but the above processing already covered the search terms.  The tables I downloaded were tblCollections_Collections, tblCollections_Content, and tblAccessions_Accessions.  Running page_titles.py with these files I compiled a list of 967 webpages with stats about page views and content.
+
+3. Direct Database Querying 
+I attempted to connect directly to the database using the script dbquery.py.  I concluded that the module required does not connect to the older version of MySQL used by archivedb.  This approach would be best (as it could be the most automated), however I still have to work out how it can be done.
+
+After compiling all of the URLs with their page descriptions I found many duplicate pages with different URLs. To condense these pages to the same item, I made a dictionary using the IDs as each key and then outputted a new file, Pages_Output_Condensed.csv with the new values.  Pageviews and Unique Pageviews were added together to give more realistic representations of the data. 
+
+Looking further at the URLs visited we realized that specific collection content pages (collections/findingaid) were not being recorded by Google Analytics. Further analysis of these pages will therefore be tabled until more results come in.
+
+
+
+
+
+
+
