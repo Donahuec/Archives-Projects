@@ -34,5 +34,5 @@ Following up with the work outlined in Notes.txt, here I go through an updated a
 ----- Analyzing the Data -----
 
 - Focus mainly on the top ~30 terms (sorted by Total Unique Searches)
-- 
-
+- It is helpful to color code the top 10 in each category to see which search terms are noteable in multiple areas
+- More notes on this can be found in strategies.txt in the Search_Terms directory
