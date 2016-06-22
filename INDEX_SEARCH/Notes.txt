@@ -172,7 +172,7 @@ Steps:
 
 	what needs to be done from here:
 	set up the dialog so that it asks the user for either a content id, or a collection id
-	(or nothing) depending on what they chose when opening the dialog
+	(or nothing) depending on what they chose when opening the dialog 
 
 
 
