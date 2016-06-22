@@ -7,12 +7,16 @@
 | From Nat, Initial Descriptions:
 | We will start with this collection as a pilot
 | https://archivedb.carleton.edu/?p=collections/controlcard&id=2809
-| All fields to be indexed will be stored in tblCollections_Collections.RevisionHistory and listed using the MySQL table.fieldname format. In the case of User Defined Fields, there need to | be a definition of the Title value to distinguish between all the User Defined fields.
+| All fields to be indexed will be stored in tblCollections_Collections.RevisionHistory and listed using the MySQL
+| table.fieldname format. In the case of User Defined Fields, there need to be a definition of the Title value to
+| distinguish between all the User Defined fields.
 |
 | See attached sheet as a template of the output
 |
-| Using MySQL, create a user defined field containing text from all fields that we want searchable across fields. Examples include title, creator, date and subjects. Concatenate all their | values together into one user defined field that is searchable and hidden. Then we would need to write in additional checks to see if there is already a search term field and if so, 
-| overwrite its contents.
+| Using MySQL, create a user defined field containing text from all fields that we want searchable across fields.
+| Examples include title, creator, date and subjects. Concatenate all their values together into one user defined 
+| field that is searchable and hidden. Then we would need to write in additional checks to see if there is already a 
+| search term field and if so, overwrite its contents.
 |  +-------------------------------------------+------------+------------+-------------------------+------------+
 |  |ID                                         |ContentID   |Title       |Value                    |EADElementID|
 |  +-------------------------------------------+------------+------------+-------------------------+------------+
@@ -20,7 +24,10 @@
 |  +-------------------------------------------+------------+------------+-------------------------+------------+
 |
 | Notes from Caitlin as of March 3rd:
-| Current progress:: We have a full set of Mysql stored procedures that will do this for a collection but it is currently very inefficient/ slow. The next step is to see if we can create a | PHP version that could be accessed through the admin page. I believe running a php version would be much faster, as a lot of the parts that require looping and temporary tables could be | easily done in one step with PHP.
+| Current progress: We have a full set of Mysql stored procedures that will do this for a collection but it is
+| currently very inefficient/slow. The next step is to see if we can create a PHP version that could be accessed
+| through the admin page. I believe running a php version would be much faster, as a lot of the parts that require 
+| looping and temporary tables could be easily done in one step with PHP.
 |
 +---End notes from Trello---------------------------------------------------------------------------
 
@@ -44,7 +51,7 @@ item_update:
 
 rev_hist_cursor:
 	Cursor through the items in RevisionHistory. for each item do the following:
-	if the item contains "tblcollections_UserFields" replace "tblcollections_userfields.title=" with an empty string. NExt insert into UserFieldContent the value from the corresponding userfield for that item. If the item is not a UserField then replace "tblcollections_content." with an empty string. Next we need to prepare a MySQL statement, so that we can insert the modified value from RevisionHistory into the SELECT statement, and select that column from tblcollections_content. We select this into a temporary variable. Then we insert this into Userfieldcontent.
+	if the item contains "tblcollections_UserFields" replace "tblcollections_userfields.title=" with an empty string. Next insert into UserFieldContent the value from the corresponding userfield for that item. If the item is not a UserField then replace "tblcollections_content." with an empty string. Next we need to prepare a MySQL statement, so that we can insert the modified value from RevisionHistory into the SELECT statement, and select that column from tblcollections_content. We select this into a temporary variable. Then we insert this into Userfieldcontent.
 
 field_val_cursor:
 	First, we create a variable that holds the return value, which is initially empty. Next we cursor through our temporary UserFieldContent table selecting the title and value from each row. For each row, we do the following:
@@ -54,10 +61,10 @@ field_val_cursor:
 ---Analysis of Current Algorithm---
 -----------------------------------
 
-Currently this algorithm runs far too slowly. It takes a very long time for even one small collection to update, and is not reasonable to use on our entire collection. MySQL's limitations on storing variables creates too inneficient of a program due to how frequently we must loop through temporary tables. First, we have to loop through every item in the collection, then we have to loop through the revision history and userfield content for every item. For each of these loops we have several select statements. Overall this ends up slowing the problem down massively.
+Currently this algorithm runs far too slowly. It takes a very long time for even one small collection to update, and is not reasonable to use on our entire collection. MySQL's limitations on storing variables creates too inefficient of a program due to how frequently we must loop through temporary tables. First, we have to loop through every item in the collection, then we have to loop through the revision history and userfield content for every item. For each of these loops we have several select statements. Overall this ends up slowing the problem down massively.
 
 ------------------------
----Next Approach::PHP---
+---Next Approach: PHP---
 ------------------------
 
 Next I will try and make a PHP tool in Archon that will do these steps. PHP should give us a little more flexibility and speed, as it will require less looping, and fewer queries. It should also give us a little more power over what work we want to do. 
@@ -94,7 +101,7 @@ Locations changes were made:
 CONTAINS FUNCTIONS: digitallibrary_ui_getfilelist()
 
 -lines 35-38: call to digitallibrary_ui_getfilelist() based on user input
--lines 45-58: Function digitallibrary_ui_getfilelist(). This creates an array from getLinedFileList(), and setsup information based on this. 
+-lines 45-58: Function digitallibrary_ui_getfilelist(). This creates an array from getLinedFileList(), and sets up information based on this. 
 -lines 400-404: add 'Update all' and 'Convert Blobs' buttons to the admin ui. Update all calls packages/digitallibrary/admin/updatecontentfiles.php, and 'Convert Blobs' calls .../convertblobs.php.
 -line 420: adds the DirectLink field to the file section
 
