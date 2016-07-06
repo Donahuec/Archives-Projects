@@ -1,0 +1,90 @@
+Notes for the approach using PHP
+Started 6/27/16
+
+
+Goal:
+
+Add new field in tblCollections_UserFields that has a Title value of IndexField and a Value value of the list of searchable terms.
+
+- All fields to be indexed are from tblCollections_Collections.RevisionHistory and listed using the MySQL table.fieldname format.
+- The fields listed should be separated with semicolons.
+
+
+Process:
+
+1. Using the skeleton tool made by Caitlin, I created a row in the admin interface (in the Database Management section) called Index search.
+
+2. Editing the database.php file, I created the options to modify an item, collection, or entire database.  Upon selecting and clicking save, the file indexutil.php is run.
+
+3. The script indexutil.php runs several SQL queries and updates the user field IndexField with the parameters listed in the goal.
+
+4. I also added these phrases:
+	- Phrase Name: collidnum, Phrase Value: Collection ID Number
+	- Phrase Name: itemidnum, Phrase Value: Item ID Number
+	- Phrase Name: indexall,  Phrase Value: Index all items
+	Note: These can be added easily using the Phrase Manager. The other settings are:
+		- Package: Archon Administration
+		- Archon Module: Database Management
+		- Phrase Type: Administrative Phrase 
+
+5. Using the import button as an example, I implemented a pop-up report of the results of the indexing.  This also allowed for the loading gif to run while fetching the data.
+
+
+Notes:
+
+Running on Collection ID 50 (7224 items)
+Trial 1: took 8.5 minutes, however a bug in the code caused no items to actually update.
+Trial 2: took 10 minutes, however it had to insert data for every item.
+Trial 3: took 10.5 minutes, ended with error.  Performing no replacements this time (1 less query).
+
+Currently the algorithm performs a maximum of (#terms + 4) queries per item.  With collection 50 this comes out to 9*7224 = 65,016 queries.
+
+Next I will see how much the queries affect the speed of the algorithm, and then determine how to make it more efficient overall.
+
+This query gets all of the terms in a single lookup.  It needs to be built, however, for each item.  For details, look at the function getIndexFieldValue() in indexutil.php
+
+SELECT CONCAT(
+	(
+	SELECT CONCAT( c.Title,  "; ", c.Date )
+	FROM tblCollections_Content c
+	WHERE ID =76054
+	),
+	"; ",
+	(
+	SELECT GROUP_CONCAT( Value SEPARATOR  '; ' )
+	FROM tblCollections_UserFields
+	WHERE (
+		Title =  'Narrator'
+		OR Title =  'Interviewer'
+	)
+	AND ContentID =76054
+	)
+) AS IndexField
+
+
+Implementing this query sped up the algorithm so that it now indexes at a rate of ~17.7 items per second (3 queries per item).
+
+For some reason, there is no time difference from updating or not, even though not updating requires one less query. Without the last two queries, however, it speeds up to a rate of ~34.4 items/sec. If I can update all the entries with just one query, I could double the efficiency.  It is possible to update many rows at once very efficiently, however I can't find a way to do that and also check to see if the value already exists.
+
+
+
+=== Time Tests ===
+
+How much does adding the index field slow down loading the page?
+
+Collection 2809 (584 items)
+- Page load (no IndexField term): 6.02, 4.80, 4.68, 4.33, 5.35, 4.48, 3.43, 4.19, 4.83, 3.00 -> Average = 4.51 seconds
+- Page load (w/ IndexField term): 8.03, 6.48, 5.67, 5.62, 6.01, 7.32, 5.80, 5.47, 5.18, 5.43 -> Average = 6.10 seconds (35.3% worse)
+
+Collection 50 (7224 items)
+- Page load (no IndexField term): 13.92, 12.33, 14.61, 11.04, 11.74, 10.67, 11.28, 11.28, 11.36, 10.59 -> Average = 11.88 seconds
+- Page load (w/ IndexField term): 16.55, 15.50, 16.72, 13.62, 14.19, 13.98, 14.42, 14.08, 14.69, 14.13 -> Average = 14.79 seconds (24.5% worse)
+
+Searches:
+- 'Carleton' (no IndexField term): 3.75, 3.83, 3.93, 3.66, 4.25, 3.57, 3.82, 3.78, 3.60, 3.81, 3.77, 3.56, 3.72, 3.75, 3.55, 3.84, 3.75 -> Average = 3.76 seconds 
+- 'Carleton' (w/ IndexField term): 7.62, 7.64, 5.85, 5.04, 4.88, 4.86, 4.89, 4.78, 4.87, 5.03, 4.86, 6.22, 5.25, 5.00, 4.93, 5.36, 4.97 -> Average = 5.28 seconds (40% worse)
+
+- '1950' (no IndexField term): 1.53, 2.08, 2.40, 1.40, 1.49, 1.35, 1.53, 1.45, 1.53, 1.48, 1.53, 1.33, 1.73, 1.99, 1.97, 1.49, 1.92 -> Average = 1.57 seconds
+- '1950' (w/ IndexField term): 4.90, 4.14, 2.56, 3.22, 2.88, 3.01, 2.91, 2.84, 3.14, 4.52, 3.14, 2.46, 3.13, 2.34, 3.18, 2.80, 3.25 -> Average = 3.02 seconds (92% worse)
+
+

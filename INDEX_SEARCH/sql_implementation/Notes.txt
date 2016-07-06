@@ -8,7 +8,7 @@
 | We will start with this collection as a pilot
 | https://archivedb.carleton.edu/?p=collections/controlcard&id=2809
 | All fields to be indexed will be stored in tblCollections_Collections.RevisionHistory and listed using the MySQL
-| table.fieldname format. In the case of User Defined Fields, there need to be a definition of the Title value to
+| table.fieldname format. In the case of User Defined Fields, there needs to be a definition of the Title value to
 | distinguish between all the User Defined fields.
 |
 | See attached sheet as a template of the output
@@ -114,7 +114,7 @@ CONTAINS FUNCTIONS: digitallibrary_ui_getfilelist()
 -lines 231-235: populates the Filename field if direct link is provided
 
 
--->packages/digitallibrary/lib/core/archon.inc.php<--
+-->packages/digitallibrary/lib/core/archon.inc.php<—1
 CONTAINS FUNCTIONS: getLinkedFileList() and getLinkedFiles()
 
 -lines 321-338: Function getLinkedFileList(). Gets an array of file names for direct links
@@ -125,7 +125,7 @@ CONTAINS FUNCTIONS: getLinkedFileList() and getLinkedFiles()
 CONTAINS FUNCTION dbStorContentURLFiles()
 
 -line 248: in dbLoadfiles(), adds DirectLink to query
--lines 561-599: function dbStoreContentURLFiles(). adds DirectLink, DigitalCOntentID, Title, and Filename to file, then calls dbStore.
+-lines 561-599: function dbStoreContentURLFiles(). adds DirectLink, DigitalContentID, Title, and Filename to file, then calls dbStore.
 -line 685: call to dbStoreContentURLFiles() at end of dbStore()
 
 
