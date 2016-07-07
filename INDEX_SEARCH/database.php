@@ -8,6 +8,7 @@
 * @subpackage AdminUI
 * @author Chris Rishel; converted to new interface by Chris Prom, 1/29/2009
 * Last modified by Caleb Braun 7/6/2016
+*
 */
 
 isset($_ARCHON) or die();
@@ -114,7 +115,7 @@ function database_ui_dialog_index_search()
   } elseif ($IndexUtility == 'Item') {
     $dialogSection->insertRow('itemidnum')->insertTextField('itemidnum', 30, 100)->required();
   } else {
-    $yousure = "This may take a while, are you sure you want to proceed?";
+    $yousure = "This will make the database unavailable while indexing, are you sure you want to proceed?";
     $dialogSection->insertRow('indexallitems')->insertInformation('caution', $yousure);
     $dialogSection->insertRow('Yes')->insertCheckBox('indexall');
   }
