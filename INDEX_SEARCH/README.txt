@@ -1,6 +1,6 @@
 Index Search Project
 Caleb Braun, Carleton College
-7/6/16
+7/7/16
 
 
 
@@ -13,7 +13,11 @@ Installation:
 
 1. Add indexutil.php to /packages/core/admin/
 2. Replace /packages/core/admin/database.php with the new version
-3. Run the query index_search_phrases.sql 
+3. Add updatekeywords.php to /packages/collections/admin/
+4. In /packages/collections/admin/collectioncontent.php, insert the line:
+	include "updatekeywords.php";
+on line 1292 (right after "$location = ($count > 1) ? ...")
+5. Run the query index_search_phrases.sql 
 
 
 Usage:
