@@ -28,10 +28,15 @@ if ($indexParams) {
 // Builds and runs a query that gets each index field and concatenates the
 // keywords into one term
 function getIndexFieldValues($id, $params) {
+  // Determine if the item has a creator
+  $query = "SELECT * FROM tblCollections_CollectionContentCreatorIndex WHERE CollectionContentID = $id";
+  $row = runQuery($query);
+  $creators = $row['CreatorID'];
+
   $otherTables = $params['tables'];
   $userFields = $params['userFields'];
-  $selectOTs = "SELECT 1, 1 LIMIT 0"; // Query default returns NULL
-  $selectUFs = "SELECT 1, 1 LIMIT 0";
+  $selectOTs = "";
+  $selectUFs = "";
 
   // ----- Start Query ----- //
   if ($otherTables) {
@@ -40,6 +45,7 @@ function getIndexFieldValues($id, $params) {
     $selectOTs .= ") AS Value FROM ";
     $selectOTs .= implode(", ", array_values(array_unique($otherTables)));
     $selectOTs .= " WHERE ID=" . $id;
+    $selectOTs .= ($userFields or $creators) ? " UNION" : "";
   }
 
   if ($userFields) {
@@ -50,19 +56,21 @@ function getIndexFieldValues($id, $params) {
     $selectUFs = "SELECT ContentID, Value FROM tblCollections_UserFields WHERE (";
     $selectUFs .= implode("OR ", $ufs);
     $selectUFs .= ") AND ContentID = " . $id;
+    $selectUFs .= ($creators) ? " UNION" : "";
   }
 
-  $selectCRs = "SELECT a.CollectionContentID, b.Name
-                FROM tblCollections_CollectionContentCreatorIndex AS a
-                JOIN tblCreators_Creators AS b ON a.CreatorID = b.ID
-                AND a.CollectionContentID =" . $id;
+  if ($creators) {
+    $selectCRs = " (SELECT a.CollectionContentID ContentID, b.Name Value
+    FROM tblCollections_CollectionContentCreatorIndex AS a
+    JOIN tblCreators_Creators AS b ON a.CreatorID = b.ID
+    AND a.CollectionContentID = $id) ";
+  }
 
-  $query = "SELECT tmp.ContentID, GROUP_CONCAT(tmp.Value SEPARATOR '; ') AS IndexField FROM ((";
-  $query .= $selectOTs . ") UNION (" . $selectUFs . ") UNION (" . $selectCRs . ")) AS tmp GROUP BY ContentID";
+  $query = "SELECT tmp.ContentID, GROUP_CONCAT(tmp.Value SEPARATOR '; ') AS IndexField FROM (";
+  $query .= $selectOTs . $selectUFs . $selectCRs . ") AS tmp GROUP BY ContentID";
   // ----- End Query ----- //
 
-  $result = runQuery($query, $sessionStats);
-  $row = $result -> fetchRow();
+  $row = runQuery($query);
   $indexFieldVal = str_replace("'", "''", $row['IndexField']);
 
   return $indexFieldVal;
@@ -76,10 +84,7 @@ function getIndexSources($idNum) {
             FROM tblCollections_Collections, tblCollections_Content
             WHERE tblCollections_Content.CollectionID = tblCollections_Collections.ID
             AND tblCollections_Content.ID=$idNum";
-
-  $result = runQuery($query);
-  $row = $result -> fetchRow();
-  $result -> free();
+  $row = runQuery($query);
 
   if (!$row['RevisionHistory']) {
     return false;
@@ -113,10 +118,15 @@ function runQuery($q) {
 
   $result = $_ARCHON -> mdb2 -> query($q);
   if(PEAR::isError($result)) {
-    trigger_error($result->getMessage(), E_USER_ERROR);
+    $m = "Error: Invalid index terms for this collection. runQ";
+    $_ARCHON->declareError($m);
+    $err = $_ARCHON->Error;
+    $_ARCHON->AdministrativeInterface->sendResponse($err, $arrIDs, $_ARCHON->Error, false, $location);
+    return;
   }
 
-  return $result;
+  $r = $result -> fetchRow();
+  return $r;
 }
 
 
@@ -124,8 +134,7 @@ function runQuery($q) {
 function updateIndexField($itemid, $indexFieldValue) {
   $query = "SELECT ID, Value FROM tblCollections_UserFields
             WHERE ContentID = $itemid AND Title LIKE 'IndexField'";
-  $result = runQuery($query, $sessionStats);
-  $row = $result -> fetchRow();
+  $row = runQuery($query);
 
   if (!indexFieldValue);
 
