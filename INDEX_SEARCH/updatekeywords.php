@@ -40,12 +40,12 @@ function getIndexFieldValues($id, $params) {
 
   // ----- Start Query ----- //
   if ($otherTables) {
-    $selectOTs = "SELECT ID AS ContentID, CONCAT_WS('; ', ";
+    $selectOTs = " (SELECT ID AS ContentID, CONCAT_WS('; ', ";
     $selectOTs .= implode(", ", array_keys($otherTables));
     $selectOTs .= ") AS Value FROM ";
     $selectOTs .= implode(", ", array_values(array_unique($otherTables)));
-    $selectOTs .= " WHERE ID=" . $id;
-    $selectOTs .= ($userFields or $creators) ? " UNION" : "";
+    $selectOTs .= " WHERE ID=" . $id . ") ";
+    $selectOTs .= ($userFields or $creators) ? "UNION" : "";
   }
 
   if ($userFields) {
@@ -53,10 +53,10 @@ function getIndexFieldValues($id, $params) {
     foreach ($userFields as $val) {
       $ufs[] = "Title ='" . $val . "'";
     }
-    $selectUFs = "SELECT ContentID, Value FROM tblCollections_UserFields WHERE (";
+    $selectUFs = " (SELECT ContentID, Value FROM tblCollections_UserFields WHERE (";
     $selectUFs .= implode("OR ", $ufs);
-    $selectUFs .= ") AND ContentID = " . $id;
-    $selectUFs .= ($creators) ? " UNION" : "";
+    $selectUFs .= ") AND ContentID = " . $id . ") ";
+    $selectUFs .= ($creators) ? "UNION" : "";
   }
 
   if ($creators) {
@@ -118,8 +118,7 @@ function runQuery($q) {
 
   $result = $_ARCHON -> mdb2 -> query($q);
   if(PEAR::isError($result)) {
-    $m = "Error: Invalid index terms for this collection. runQ";
-    $_ARCHON->declareError($m);
+    $_ARCHON->declareError("Error: Invalid index terms for this collection.");
     $err = $_ARCHON->Error;
     $_ARCHON->AdministrativeInterface->sendResponse($err, $arrIDs, $_ARCHON->Error, false, $location);
     return;
