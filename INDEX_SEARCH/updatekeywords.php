@@ -30,8 +30,8 @@ if ($indexParams) {
 function getIndexFieldValues($id, $params) {
   $otherTables = $params['tables'];
   $userFields = $params['userFields'];
-  $selectOTs = "";
-  $selectUFs = "";
+  $selectOTs = "SELECT 1, 1 LIMIT 0"; // Query default returns NULL
+  $selectUFs = "SELECT 1, 1 LIMIT 0";
 
   // ----- Start Query ----- //
   if ($otherTables) {
@@ -52,8 +52,13 @@ function getIndexFieldValues($id, $params) {
     $selectUFs .= ") AND ContentID = " . $id;
   }
 
+  $selectCRs = "SELECT a.CollectionContentID, b.Name
+                FROM tblCollections_CollectionContentCreatorIndex AS a
+                JOIN tblCreators_Creators AS b ON a.CreatorID = b.ID
+                AND a.CollectionContentID =" . $id;
+
   $query = "SELECT tmp.ContentID, GROUP_CONCAT(tmp.Value SEPARATOR '; ') AS IndexField FROM ((";
-  $query .= $selectOTs . ") UNION (" . $selectUFs . ")) AS tmp GROUP BY ContentID";
+  $query .= $selectOTs . ") UNION (" . $selectUFs . ") UNION (" . $selectCRs . ")) AS tmp GROUP BY ContentID";
   // ----- End Query ----- //
 
   $result = runQuery($query, $sessionStats);

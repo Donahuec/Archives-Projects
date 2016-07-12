@@ -11,13 +11,16 @@ To make the database's search engine get more accurate results by adding a searc
 
 Installation:
 
+-- Utility --
 1. Add indexutil.php to /packages/core/admin/
 2. Replace /packages/core/admin/database.php with the new version
-3. Add updatekeywords.php to /packages/collections/admin/
-4. In /packages/collections/admin/collectioncontent.php, insert the line:
+3. Run the query index_search_phrases.sql 
+
+-- Update on Save --
+1. Add updatekeywords.php to /packages/collections/admin/
+2. In /packages/collections/admin/collectioncontent.php, insert the line:
 	include "updatekeywords.php";
-on line 1292 (right after "$location = ($count > 1) ? ...")
-5. Run the query index_search_phrases.sql 
+on line 1292 (right after "$location = ($count > 1) ? ..." within the "if($_REQUEST['f'] == 'store')" statement.
 
 
 Usage:
