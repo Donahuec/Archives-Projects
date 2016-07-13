@@ -6,7 +6,7 @@
 *
 * @package Archon
 * @subpackage AdminUI
-* @author Caleb Braun, 6/28/2016
+* @author Caleb Braun, 7/13/2016
 */
 
 isset($_ARCHON) or die();
@@ -275,7 +275,9 @@ function getIndexSources($idNum, &$sessionStats) {
           $indexFieldSources["tables"][$indexField] = $table;
         }
       } else {
-        echo "Skipping index term: \"$indexField\" in collection $collectionID.<br>";
+        echo "Skipping index term: \"$indexField\" in <a target=\"_blank\"
+              href= ?p=admin/collections/collections&id=" . $collectionID .
+              " style=\"color:#B5EFFF\">collection $collectionID</a><br>";
         $sessionStats['warnings']++;
       }
     }
@@ -438,14 +440,16 @@ function updateIndexField($indexFieldValues, &$sessionStats) {
 
 // Checks to see whether the parameters entered in RevisionHistory are valid
 function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
+  global $_ARCHON;
+
   $validTables = array("tblCollections_Content", "tblCollections_UserFields");
   $warning = "Warning: %s \"%s\" does not exist.  ";
 
   // Check if the table exists
   $t_exists = false;
   $tableList = runQuery("SHOW TABLES", $sessionStats);
-  foreach ($tableList as $tbl) {
-    if ($table == $tbl['Tables_in_archon']) $t_exists = true;
+  foreach ($tableList as $t) {
+    if ($table == $t['Tables_in_' . lcfirst($_ARCHON->db->DatabaseName)]) $t_exists = true;
   }
   if (!$t_exists) {
     echo sprintf($warning, "Table", $table);

@@ -111,9 +111,9 @@ function database_ui_dialog_index_search()
 
   //insertTextField --> Inserts text box for user input
   if ($IndexUtility == 'Collection') {
-    $dialogSection->insertRow('collidnum')->insertTextField('collidnum', 30, 100)->required();
+    $dialogSection->insertRow('collidnum')->insertTextField('collidnum', 30, 100);
   } elseif ($IndexUtility == 'Item') {
-    $dialogSection->insertRow('itemidnum')->insertTextField('itemidnum', 30, 100)->required();
+    $dialogSection->insertRow('itemidnum')->insertTextField('itemidnum', 30, 100);
   } else {
     $yousure = "This will make the database unavailable while indexing, are you sure you want to proceed?";
     $dialogSection->insertRow('indexallitems')->insertInformation('caution', $yousure);
