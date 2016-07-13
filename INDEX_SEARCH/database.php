@@ -544,7 +544,7 @@ function database_ui_main()
   $indexSearch = $generalSection->insertRow('Index search')->insertSelect('indexChoices', $indexOpts, array());
   //unsure what this does
   $indexSearch->Watch = false;
-  //this is needed for the row to display
+  //put all output in an output buffer
   ob_start();
   ?>
 
@@ -553,7 +553,7 @@ function database_ui_main()
   <script type="text/javascript">
   /* <![CDATA[ */
   $(function () {
-    $('#launchindexsearch').button({icons:{primary: 'ui-icon-newwin'}, disabled: true})
+    $('#launchindexsearch').button({icons:{primary: 'ui-icon-newwin'}, disabled: ($('#indexChoicesInput').val() == "0")})
     .click(function() {admin_ui_launch_index_search(); return false});
 
     $('#indexChoicesInput').change(function(){
