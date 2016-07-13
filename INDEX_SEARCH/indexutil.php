@@ -456,7 +456,7 @@ function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
   $c_exists = false;
   $columnList = runQuery("SHOW COLUMNS FROM $table", $sessionStats);
   foreach ($columnList as $col) {
-    if ($field == $col['Field']) $c_exists = true;
+    if (ucfirst($field) == $col['Field']) $c_exists = true;
   }
   if (!$c_exists) {
     echo sprintf($warning, "Field", $field);
