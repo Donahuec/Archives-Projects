@@ -82,7 +82,7 @@ if ($_REQUEST['itemidnum']) {
   }
 
   if (!$sessionStats['errors']) {
-    echo "<br><br>Successfully indexed all collections!</font><br>";
+    echo "<br><br><b>Successfully indexed all collections!</font></b><br>";
   }
 
 } else {
@@ -108,6 +108,7 @@ function indexCollection($collID, &$sessionStats) {
     foreach ($rows as $item) {
       $itemIDArray[] = $item['ID'];
     }
+    if (!$itemIDArray) return false;
 
     $indexFieldValues = getIndexFieldValues($itemIDArray, $indexParams, $sessionStats);
     updateIndexField($indexFieldValues, $sessionStats);
@@ -247,15 +248,15 @@ function getIndexSources($idNum, &$sessionStats) {
     return false;
 
   } elseif ($row['RevisionHistory']) {
-    $revisionList = explode(', ', $row['RevisionHistory']);
-    if ($verbose) echo "Indexing: <br>";
-
     if ($sessionStats['indexType'] == 'item') {
       $collectionID = $row['CollectionID'];
     }
 
+    $revisionList = explode(', ', $row['RevisionHistory']);
+    if ($verbose) echo "Indexing: <br>";
+
     // If there is an '=' character in the string, we know it is a user field.
-    // If not, separate out the table and put it in the $tables array.
+    // If not, we are only accepting tblCollections_Content.
     foreach ($revisionList as $indexField) {
       $arr = explode('.', $indexField);
       $arr2 = explode('=', $arr[1]);
@@ -275,6 +276,7 @@ function getIndexSources($idNum, &$sessionStats) {
         }
       } else {
         echo "Skipping index term: \"$indexField\" in collection $collectionID.<br>";
+        $sessionStats['warnings']++;
       }
     }
 
@@ -436,20 +438,28 @@ function updateIndexField($indexFieldValues, &$sessionStats) {
 
 // Checks to see whether the parameters entered in RevisionHistory are valid
 function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
+  $validTables = array("tblCollections_Content", "tblCollections_UserFields");
   $warning = "Warning: %s \"%s\" does not exist.  ";
+
   // Check if the table exists
-  $row = runQuery("SHOW TABLES LIKE '$table'", $sessionStats, true);
-  if (count($row) == 0) {
+  $t_exists = false;
+  $tableList = runQuery("SHOW TABLES", $sessionStats);
+  foreach ($tableList as $tbl) {
+    if ($table == $tbl['Tables_in_archon']) $t_exists = true;
+  }
+  if (!$t_exists) {
     echo sprintf($warning, "Table", $table);
-    $sessionStats['warnings']++;
     return false;
   }
 
   // Check if the column exists
-  $row = runQuery("SHOW COLUMNS FROM $table LIKE '$field'", $sessionStats, true);
-  if (count($row) == 0) {
+  $c_exists = false;
+  $columnList = runQuery("SHOW COLUMNS FROM $table", $sessionStats);
+  foreach ($columnList as $col) {
+    if ($field == $col['Field']) $c_exists = true;
+  }
+  if (!$c_exists) {
     echo sprintf($warning, "Field", $field);
-    $sessionStats['warnings']++;
     return false;
   }
 
@@ -458,9 +468,14 @@ function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
     $row =  runQuery("SELECT ID FROM $table WHERE Title = '$value'", $sessionStats, true);
     if (count($row) == 0) {
       echo sprintf($warning, "User field", $value);
-      $sessionStats['warnings']++;
-      return false;
+        return false;
     }
+  }
+
+  // Check if they are indexing from a valid tables
+  if (!in_array($table, $validTables)) {
+    echo "<br>Warning: You cannot select index terms from this table.<br>";
+    return false;
   }
 
   // Don't let them put IndexField as a user field to indexing
