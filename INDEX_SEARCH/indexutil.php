@@ -62,7 +62,6 @@ if ($_REQUEST['itemidnum']) {
   echo "<br>Updating collection $collID...<br><br>";
 
   if (!(testInputValidity($collID, 'user'))) {
-    echo $collID;
     generateStatusReport($sessionStats);
     exit(1);
   }
@@ -73,7 +72,7 @@ if ($_REQUEST['itemidnum']) {
 /* ~~ Update everything ~~ */
 } elseif ($_REQUEST['indexall']){
   $sessionStats["indexType"] = 'all';
-  $query = "SELECT ID, Title FROM tblCollections_Collections";
+  $query = "SELECT ID FROM tblCollections_Collections";
   $collectionIDs = runQuery($query, &$sessionStats);
 
   // Loop through every collection, indexing them one at a time
@@ -440,16 +439,14 @@ function updateIndexField($indexFieldValues, &$sessionStats) {
 
 // Checks to see whether the parameters entered in RevisionHistory are valid
 function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
-  global $_ARCHON;
-
   $validTables = array("tblCollections_Content", "tblCollections_UserFields");
   $warning = "Warning: %s \"%s\" does not exist.  ";
 
   // Check if the table exists
   $t_exists = false;
-  $tableList = runQuery("SHOW TABLES", $sessionStats);
+  $tableList = runQuery("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME LIKE 'tbl%'", $sessionStats);
   foreach ($tableList as $t) {
-    if ($table == $t['Tables_in_' . lcfirst($_ARCHON->db->DatabaseName)]) $t_exists = true;
+    if ($table == $t['TABLE_NAME']) $t_exists = true;
   }
   if (!$t_exists) {
     echo sprintf($warning, "Table", $table);
@@ -478,13 +475,13 @@ function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
 
   // Check if they are indexing from a valid tables
   if (!in_array($table, $validTables)) {
-    echo "<br>Warning: You cannot select index terms from this table.<br>";
+    echo "Warning: You cannot select index terms from this table.<br>";
     return false;
   }
 
   // Don't let them put IndexField as a user field to indexing
   if (!strcasecmp($value, "IndexField")) {
-    echo "<br>Warning: You cannot index the current index field, stop trying to break Archon.<br>";
+    echo "Warning: You cannot index the current index field, stop trying to break Archon.<br>";
     return false;
   }
 
