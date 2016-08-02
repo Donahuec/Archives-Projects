@@ -29,9 +29,10 @@ if ($_REQUEST['itemidnum']) {
   $sessionStats["indexType"] = 'item';
   echo "<br>Updating item $itemID...<br><br>";
 
-  if (!(testInputValidity($itemID, 'user'))) {
+  if (!ctype_digit($itemID)) {
+    echo "<b>ERROR: </b>Please enter a number.<br>";
     generateStatusReport($sessionStats);
-    exit(1);
+    return;
   }
 
   // Gets the source tables/columns for the IndexField terms
@@ -61,12 +62,11 @@ if ($_REQUEST['itemidnum']) {
   $sessionStats["indexType"] = 'collection';
   echo "<br>Updating collection $collID...<br><br>";
 
-  if (!(testInputValidity($collID, 'user'))) {
-    generateStatusReport($sessionStats);
-    exit(1);
+  if (!ctype_digit($collID)) {
+    echo "<b>ERROR: </b>Please enter a number.<br>";
+  } else {
+    indexCollection($collID, $sessionStats);
   }
-
-  indexCollection($collID, $sessionStats);
 
 
 /* ~~ Update everything ~~ */
@@ -114,7 +114,6 @@ function indexCollection($collID, &$sessionStats) {
 
     echo "Successfully indexed collection $collID (";
     echo $sessionStats["numitems"]." items).</font><br>";
-
     return true;
   } else {
     return false;
@@ -126,13 +125,13 @@ function indexCollection($collID, &$sessionStats) {
 function generateStatusReport(&$sessionStats) {
   // Put status report at top
   $report = "<h3>Report: </h3><br><br>";
-  if ($sessionStats["skipped"]) {
-    $report .= plural($sessionStats["skipped"], "item");
-    $report .= " skipped because of null IndexField value.<br>";
-  }
-  $report .= plural($sessionStats["duplicates"], "item") . " already up to date.<br>";
   $report .= plural($sessionStats["inserts"], "new item") . " indexed.<br>";
   $report .= plural($sessionStats["updates"], "item") . " updated.<br>";
+  $report .= plural($sessionStats["duplicates"], "item") . " already up to date.<br>";
+  if ($sessionStats["skipped"]) {
+      $report .= plural($sessionStats["skipped"], "item");
+      $report .= " skipped because of null IndexField value.<br>";
+  }
   if ($sessionStats["warnings"]) {
     $report .= "<font color='DarkOrange'>";
     $report .= plural($sessionStats["warnings"], "warning") . ".</font><br>";
@@ -157,7 +156,7 @@ function generateStatusReport(&$sessionStats) {
 
 
 // Builds and runs a query that gets each index field and concatenates the
-// keywords into one term
+// keywords into one term. Returns an array of ids => indexfields
 function getIndexFieldValues($id, $params, &$sessionStats) {
   $otherTables = $params['tables'];
   $userFields = $params['userFields'];
@@ -221,7 +220,6 @@ function getIndexFieldValues($id, $params, &$sessionStats) {
 // Fetches the data in the RevisionHistory field of the collection and returns
 // an array containing the user fields the other tables
 function getIndexSources($idNum, &$sessionStats) {
-  $collectionID = $idNum;
   $verbose = ($sessionStats['indexType'] != 'all');
   $indexFieldSources = array( "userFields" => array(),
                               "tables" => array(),
@@ -241,16 +239,14 @@ function getIndexSources($idNum, &$sessionStats) {
 
   $row = runQuery($query, $sessionStats, true);
 
+  $collectionID = $row['CollectionID'] ? $row['CollectionID'] : $idNum;
+
   if (!$row) {
     echo "ERROR: " . ucfirst($sessionStats['indexType']) . " does not exist.";
     $sessionStats['errors']++;
     return false;
 
   } elseif ($row['RevisionHistory']) {
-    if ($sessionStats['indexType'] == 'item') {
-      $collectionID = $row['CollectionID'];
-    }
-
     $revisionList = explode(', ', $row['RevisionHistory']);
     if ($verbose) echo "Indexing: <br>";
 
@@ -265,9 +261,7 @@ function getIndexSources($idNum, &$sessionStats) {
       $valid = verifyParameter($table, $field, &$sessionStats, $arr2[1]);
 
       if ($valid) {
-        if ($verbose)  {
-          echo "$indexField<br>";
-        }
+        if ($verbose) echo "$indexField<br>";
         if ($arr2[1]) {
           $indexFieldSources["userFields"][] = $arr2[1];
         } else {
@@ -315,18 +309,18 @@ function getIndexSources($idNum, &$sessionStats) {
 
 // Adds an s if plural.  Ex. plural(3, "hat") returns "3 hats".
 function plural($n, $s) {
-  if ($n != 1) {
-    return "$n ".$s."s";
-  } else {
-    return "1 $s";
-  }
+  return (($n != 1) ? "$n ".$s."s" :  "1 $s");
 }
 
 
 // Runs a query to the database, returns result of query
-function runQuery($q, &$sessionStats, $getRow = false) {
+function runQuery($q, &$sessionStats, $getOnlyFirstRow = false) {
   global $_ARCHON;
 
+  // Security Note:
+  // It would be more secure to use the mdb2->prepare() function followed by
+  // exec(), however with the checks already in place, it did not seem
+  // completely necessary to be extra security conscience about this utility.
   $result = $_ARCHON -> mdb2 -> query($q);
   $sessionStats["queries"]++;
   if(PEAR::isError($result)) {
@@ -339,7 +333,7 @@ function runQuery($q, &$sessionStats, $getRow = false) {
     exit(1);
   }
 
-  if ($getRow) {
+  if ($getOnlyFirstRow) {
     $res = $result -> fetchRow();
   } else {
     $res = $result -> fetchAll();
@@ -351,36 +345,6 @@ function runQuery($q, &$sessionStats, $getRow = false) {
 }
 
 
-// Makes sure user input and database results are valid
-function testInputValidity($input, $inputSource) {
-  $err = false;
-  $msg = '';
-
-  if ($inputSource == 'user') {
-    // Make sure they entered a number
-    if (!ctype_digit($input)) {
-      $err = true;
-      $msg = "Please enter a number.";
-    }
-  }
-
-  if ($inputSource == 'database') {
-    // Make sure it returned a value
-    if ($input == NULL) {
-      $err = true;
-      $msg = "Unable to retrieve indexing parameters for the given ID number.";
-    }
-  }
-
-  if ($err) {
-    echo "<b>ERROR: </b>$msg<br>";
-    return false;
-  }
-
-  return true;
-}
-
-
 // Finds whether an item already has an IndexField and either inserts or updates it
 function updateIndexField($indexFieldValues, &$sessionStats) {
   $idList = implode(',', array_keys($indexFieldValues));
@@ -388,6 +352,7 @@ function updateIndexField($indexFieldValues, &$sessionStats) {
             WHERE ContentID IN ($idList) AND Title LIKE 'IndexField'";
   $rows = runQuery($query, $sessionStats);
 
+  // Make an array of the current IndexField values
   $currentVals = array();
   $contentID2ufID = array();
   foreach ($rows as $r) {
@@ -469,7 +434,7 @@ function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
     $row =  runQuery("SELECT ID FROM $table WHERE Title = '$value'", $sessionStats, true);
     if (count($row) == 0) {
       echo sprintf($warning, "User field", $value);
-        return false;
+      return false;
     }
   }
 
