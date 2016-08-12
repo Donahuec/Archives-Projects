@@ -11,6 +11,7 @@
 
 isset($_ARCHON) or die();
 
+
 $sessionStats = array("updates" => 0,
                       "inserts" => 0,
                       "queries" => 0,
@@ -21,56 +22,71 @@ $sessionStats = array("updates" => 0,
                       "errors" => 0,
                       "indexType" => NULL);
 
+
+/*  When this file is called from updating on save in
+    packages/collecitons/admin/collectioncontent.php (line 1295), it is submitting
+    the form "mainform" defined in packages/core/lib/administrativeinterface.inc.php.
+    It expects a response in xml to be displayed upon completion of submitting the
+    form (line 366). This check prevents the Admin Response (error) box from showing.
+*/
+if ($_REQUEST['p'] == 'admin/collections/collectioncontent') {
+  header('Content-type: text/xml; charset=UTF-8');
+  echo "<?xml version='1.0' encoding='UTF-8'?>\n";
+  echo "<archonresponse error='false'><message>Collection Content Database Updated Successfully</message></archonresponse>";
+}
+
+
 ob_start();
 
 /* ~~ Update an individual item ~~ */
-if ($_REQUEST['itemidnum']) {
+if (array_key_exists('itemidnum', $_REQUEST)) {
   $itemID = $_REQUEST['itemidnum'];
-  $sessionStats["indexType"] = 'item';
-  echo "<br>Updating item $itemID...<br><br>";
 
   if (!ctype_digit($itemID)) {
-    echo "<b>ERROR: </b>Please enter a number.<br>";
-    generateStatusReport($sessionStats);
-    return;
-  }
+    echo "<b>ERROR: </b>Please enter a number.";
+    $sessionStats['errors']++;
+  } else {
+    $sessionStats["indexType"] = 'item';
+    echo "<br>Updating item $itemID...<br><br>";
 
-  // Gets the source tables/columns for the IndexField terms
-  $indexParams = getIndexSources($itemID, $sessionStats);
+    // Gets the source tables/columns for the IndexField terms
+    $indexParams = getIndexSources($itemID, $sessionStats);
 
-  if ($indexParams) {
-    // Put the item ID in an array (getIndexFieldValues() expects an array)
-    $itemIDArray = array($itemID);
+    if ($indexParams) {
+      // Put the item ID in an array (getIndexFieldValues() expects an array)
+      $itemIDArray = array($itemID);
 
-    // Gets the new value for the index field for the item
-    $indexFieldValue = getIndexFieldValues($itemIDArray, $indexParams, $sessionStats);
+      // Gets the new value for the index field for the item
+      $indexFieldValue = getIndexFieldValues($itemIDArray, $indexParams, $sessionStats);
 
-    // Updates current value/inserts the new value into the table
-    $didUpdate = updateIndexField($indexFieldValue, $sessionStats);
+      // Updates current value/inserts the new value into the table
+      $didUpdate = updateIndexField($indexFieldValue, $sessionStats);
 
-    if ($sessionStats['updates'] || $sessionStats['inserts']) {
-      echo "<br>Successfully indexed item $itemID.</font>";
-    } elseif (!$sessionStats['errors']) {
-      echo "<br><font color = 'limegreen'>Item $itemID already up to date!</font>";
+      if ($sessionStats['updates'] || $sessionStats['inserts']) {
+        echo "<br>Successfully indexed item $itemID.</font>";
+      } elseif (!$sessionStats['errors']) {
+        echo "<br><font color = 'limegreen'>Item $itemID already up to date!</font>";
+      }
     }
   }
 
 
 /* ~~ Update a collection ~~ */
-} elseif ($_REQUEST['collidnum']){
+} elseif (array_key_exists('collidnum', $_REQUEST)) {
   $collID = $_REQUEST['collidnum'];
-  $sessionStats["indexType"] = 'collection';
-  echo "<br>Updating collection $collID...<br><br>";
 
   if (!ctype_digit($collID)) {
-    echo "<b>ERROR: </b>Please enter a number.<br>";
+    echo "<b>ERROR: </b>Please enter a number.";
+    $sessionStats['errors']++;
   } else {
+    $sessionStats["indexType"] = 'collection';
+    echo "<br>Updating collection $collID...<br><br>";
     indexCollection($collID, $sessionStats);
   }
 
 
 /* ~~ Update everything ~~ */
-} elseif ($_REQUEST['indexall']){
+} else {
   $sessionStats["indexType"] = 'all';
   $query = "SELECT ID FROM tblCollections_Collections";
   $collectionIDs = runQuery($query, &$sessionStats);
@@ -83,41 +99,55 @@ if ($_REQUEST['itemidnum']) {
   if (!$sessionStats['errors']) {
     echo "<br><br><b>Successfully indexed all collections!</font></b><br>";
   }
-
-} else {
-  echo "ERROR: You must select something to index.";
-  $sessionStats['errors']++;
 }
 
 generateStatusReport($sessionStats);
 
 
+// Expands out date ranges to full four digit years
+function explodeDates($term) {
+  // Finds dates like 'YYYY (+ or - 2 years)'
+  $circaPattern = "/(\d{4})\/?(\d{0,2})\s?I{0,2}\s?\(\s?\+ or \- (\d) year[s]?\)/";
+  // Finds first date range in the index field
+  $rangePattern = "/(\d{4})\s?[-\/]\s?(\d{2,})\b/";
 
-// Given a collection ID number this updates the index terms for all its items
-function indexCollection($collID, &$sessionStats) {
-  $sessionStats["numitems"] = 0;
-  $indexParams = getIndexSources($collID, $sessionStats);
-
-  if ($indexParams) {
-    // Get all the item IDs from the collection
-    $query = "SELECT ID FROM tblCollections_Content WHERE CollectionID=$collID";
-    $rows = runQuery($query, $sessionStats);
-
-    $itemIDArray = array();
-    foreach ($rows as $item) {
-      $itemIDArray[] = $item['ID'];
-    }
-    if (!$itemIDArray) return false;
-
-    $indexFieldValues = getIndexFieldValues($itemIDArray, $indexParams, $sessionStats);
-    updateIndexField($indexFieldValues, $sessionStats);
-
-    echo "Successfully indexed collection $collID (";
-    echo $sessionStats["numitems"]." items).</font><br>";
-    return true;
-  } else {
-    return false;
+  // Changes something like 'YYY5 (+ or - 2 years)' to 'YYY3-YYY7'
+  if (preg_match($circaPattern, $term, $plusOrMinus)) {
+    $extraYear = $plusOrMinus[2] ? 1 : 0;
+    $range = ($plusOrMinus[1] - intval($plusOrMinus[3])) . "-" . ($plusOrMinus[1] + intval($plusOrMinus[3]) + $extraYear);
+    $term = preg_replace($circaPattern, $range, $term);
   }
+
+  // Explode each date range
+  while (preg_match($rangePattern, $term, $matches)) {
+    $startYear = $matches[1];
+    $endYear = $matches[2];
+    $dateRange = '';
+
+    // Check for YYYY-YY or YYYY-YYYY format
+    if (strlen($endYear) != 2 && strlen($endYear) != 4) break;
+
+    // Make each end of date range the full year YYYY-YYYY and in order
+    if (strlen($endYear) == 2) {
+      if (substr($startYear, 2, 2) < $endYear) {
+        $endYear = substr($startYear, 0, 2) . $endYear;
+      } else {
+        $endYear = substr($startYear, 0, 2) + 1 . $endYear;
+      }
+    } elseif ($endYear < $startYear){
+      $startYear = $endYear;
+      $endYear = $matches[1];
+    }
+
+    // Replace with range of dates, comma separated
+    for ($year=$startYear; $year < $endYear; $year++) {
+      $dateRange .= "$year, ";
+    }
+    $dateRange .= "$endYear";
+    $term = preg_replace($rangePattern, $dateRange, $term, 1);
+  }
+
+  return $term;
 }
 
 
@@ -207,6 +237,7 @@ function getIndexFieldValues($id, $params, &$sessionStats) {
     $sessionStats['numitems']++;
     $idxflds = str_replace("'", "''", $item['IndexField']); // Escape apostrophes
     if ($idxflds) {
+      $idxflds = explodeDates($idxflds, $item['ContentID']);
       $indexFieldVals[$item['ContentID']] = $idxflds;
     } else {
       $sessionStats['skipped']++;
@@ -304,6 +335,34 @@ function getIndexSources($idNum, &$sessionStats) {
   }
 
   return $indexFieldSources;
+}
+
+
+// Given a collection ID number this updates the index terms for all its items
+function indexCollection($collID, &$sessionStats) {
+  $sessionStats["numitems"] = 0;
+  $indexParams = getIndexSources($collID, $sessionStats);
+
+  if ($indexParams) {
+    // Get all the item IDs from the collection
+    $query = "SELECT ID FROM tblCollections_Content WHERE CollectionID=$collID";
+    $rows = runQuery($query, $sessionStats);
+
+    $itemIDArray = array();
+    foreach ($rows as $item) {
+      $itemIDArray[] = $item['ID'];
+    }
+    if (!$itemIDArray) return false;
+
+    $indexFieldValues = getIndexFieldValues($itemIDArray, $indexParams, $sessionStats);
+    updateIndexField($indexFieldValues, $sessionStats);
+
+    echo "Successfully indexed collection $collID (";
+    echo $sessionStats["numitems"]." items).</font><br>";
+    return true;
+  } else {
+    return false;
+  }
 }
 
 

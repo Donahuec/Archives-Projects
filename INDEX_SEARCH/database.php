@@ -544,6 +544,13 @@ function database_ui_main()
   $indexSearch = $generalSection->insertRow('Index search')->insertSelect('indexChoices', $indexOpts, array());
   //unsure what this does
   $indexSearch->Watch = false;
+
+  // Digital Content Updater
+  $generalSection->insertRow('Synchrony II')->insertHTML("<button type='button' class='adminformbutton' onclick='window.open(\"index.php?p=admin/digitallibrary/updatecontentfiles\");'>Sync Digital Content</button>");
+  // Update blobs
+  $generalSection->insertRow('What About Blob?')->insertHTML("<button type='button' class='adminformbutton' onclick='window.open(\"index.php?p=admin/digitallibrary/convertblobs\");'>Update Blobs</button>");
+
+
   //put all output in an output buffer
   ob_start();
   ?>
