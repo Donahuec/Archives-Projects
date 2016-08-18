@@ -7,7 +7,7 @@
 * @package Archon
 * @subpackage AdminUI
 * @author Chris Rishel; converted to new interface by Chris Prom, 1/29/2009
-* Last modified by Caleb Braun 7/6/2016
+* Last modified by Caleb Braun 8/17/2016
 *
 */
 
@@ -22,22 +22,22 @@ function database_ui_initialize()
 {
   global $_ARCHON;
 
-  #Loads the base page
+  // Loads the base page
   if(!$_REQUEST['f'])
   {
     database_ui_main();
   }
-  #loads the import popup
+  // Loads the import popup
   elseif($_REQUEST['f'] == 'dialog_import')
   {
     database_ui_dialog_import();
   }
-  #loads the export popup
+  // Loads the export popup
   elseif($_REQUEST['f'] == 'dialog_export')
   {
     database_ui_dialog_export();
   }
-  #loads the index search popup
+  // Loads the index search popup
   elseif($_REQUEST['f'] == 'dialog_index')
   {
     database_ui_dialog_index_search();
@@ -77,6 +77,7 @@ function database_ui_initialize()
       require("packages/$APRCode/db/export-$ExportUtility.inc.php");
     }
   }
+  // Runs the index search
   elseif ($_REQUEST['f'] == 'indexitems') {
     require_once('indexutil.php');
   }
@@ -84,43 +85,43 @@ function database_ui_initialize()
 
 /**
 * LOAD THE DIALOG BOX FOR INDEX SEARCH
-* Look at dialog_import and dialog_export for more functionality on how to actually
-* start doing asks. Right now, al this does is display information
+*
+*
 * @global type $_ARCHON
 */
 function database_ui_dialog_index_search()
-//goes to open dialogue in js
-//stores select in url param
-//puts param into IndexUtility
-//can now access and do stuff with it here!!!
+// - Goes to open dialogue in js
+// - Stores select in url param
+// - Puts param into IndexUtility
+// - We can now access and do stuff with it here!
 {
   global $_ARCHON;
-  //sets up the dialog
-  $other_section = $_ARCHON->AdministrativeInterface->getSection('general');
+  // Sets up the dialog
   $dialogSection = $_ARCHON->AdministrativeInterface->insertSection('dialogform', 'dialog');
   $_ARCHON->AdministrativeInterface->OverrideSection = $dialogSection;
   $dialogSection->setDialogArguments('form', NULL, 'admin/core/database', 'indexitems');
 
-  //getting the data that has been passed to the url, this will tell us which
-  //function we are using (item, collection, all) and puts it in $IndexUtility
+  // Gets the data that has been passed to the url, this will tell us which
+  // function we are using (item, collection, all) and puts it in $IndexUtility
   list($IndexUtility) = explode('/', $_REQUEST['indexutility']);
 
-  //insertInformation--> inserts a text row
+  // insertInformation() inserts a text row
   $desc = "This utility updates the key words that will be found upon searching the database.";
   $dialogSection->insertRow('Description')->insertInformation('desc', $desc);
 
-  //insertTextField --> Inserts text box for user input
+  // insertTextField() inserts a text box for user input
   if ($IndexUtility == 'Collection') {
     $dialogSection->insertRow('collidnum')->insertTextField('collidnum', 30, 100);
-  } elseif ($IndexUtility == 'Item') {
+  }
+  elseif ($IndexUtility == 'Item') {
     $dialogSection->insertRow('itemidnum')->insertTextField('itemidnum', 30, 100);
-  } else {
-    $yousure = "This will make the database unavailable while indexing, are you sure you want to proceed?";
+  }
+  else {
+    $yousure = "This will attempt to index all items in the database.";
     $dialogSection->insertRow('indexallitems')->insertInformation('caution', $yousure);
-    $dialogSection->insertRow('Yes')->insertCheckBox('indexall');
   }
 
-  //starts the interface
+  // Starts the interface
   $_ARCHON->AdministrativeInterface->outputInterface();
 }
 
@@ -408,7 +409,6 @@ function database_ui_main()
           log.html(html);
 
           response.dialog('open');
-
         }
       });
       $('#dialogform').submit();
@@ -538,11 +538,11 @@ function database_ui_main()
   * Setting up the index search row that will launch the popup.
   *
   */
-  //set up the select box
-  $indexOpts = array ("Click save to index all items." => 'All', "Collection" => 'Collection', "Item" => 'Item');
-  //row is Index search, select is what goes in that row
+  // Set up the select box
+  $indexOpts = array ("All" => 'All', "Collection" => 'Collection', "Item" => 'Item');
+  // Row is Index search, select is what goes in that row
   $indexSearch = $generalSection->insertRow('Index search')->insertSelect('indexChoices', $indexOpts, array());
-  //unsure what this does
+  // Unsure what this does. $Watch is a bool in lib/adminfield.inc.php
   $indexSearch->Watch = false;
 
   // Digital Content Updater
@@ -550,8 +550,7 @@ function database_ui_main()
   // Update blobs
   $generalSection->insertRow('What About Blob?')->insertHTML("<button type='button' class='adminformbutton' onclick='window.open(\"index.php?p=admin/digitallibrary/convertblobs\");'>Update Blobs</button>");
 
-
-  //put all output in an output buffer
+  // Put all output in an output buffer
   ob_start();
   ?>
 
@@ -576,19 +575,29 @@ function database_ui_main()
     var indexutility = $('#indexChoicesInput').val();
 
     if(indexutility != "0"){
-
       var dialog = $('#dialogmodal');
       var orig_buttons = dialog.dialog('option', 'buttons');
 
-      dialog.dialog('option', 'buttons', {
-        Run: function(){
-          $('#dialogloadingscreen').show();
-          admin_ui_submit_index_search();
+      // dialog.dialog('option', 'buttons', {
+      dialog.dialog({
+        buttons: [
+        {
+            id: "button-run",
+            text: "Run",
+            click: function() {
+              $('#dialogloadingscreen').show();
+              admin_ui_submit_index_search();
+            }
         },
-        Cancel: function(){
-          $(this).dialog('close');
-          $(this).dialog('option','buttons', orig_buttons);
+        {
+          id: "button-cancel",
+          text: "Cancel",
+          click: function() {
+            $(this).dialog('close');
+            $(this).dialog('option','buttons', orig_buttons);
+          }
         }
+      ]
       });
       admin_ui_opendialog('core','database', 'index', {indexutility: indexutility});
     }
@@ -598,6 +607,9 @@ function database_ui_main()
   function admin_ui_submit_index_search()
   {
     $('#dialogmodal .relatedselect>*').attr('selected','selected');
+
+    $("#button-run").button("disable");
+    $("#button-cancel").button("disable");
 
     var admindialog = $('#dialogmodal');
     $('#dialogform').ajaxForm({
@@ -636,10 +648,10 @@ function database_ui_main()
   </script>
 
   <?php
-  //adds the button to the row
+  // Adds the button to the row
   $button = ob_get_clean();
   $generalSection->getRow('Index search')->insertHTML($button);
-  //index search stuff ends here
+  // Index search mod END
   ?>
 
 

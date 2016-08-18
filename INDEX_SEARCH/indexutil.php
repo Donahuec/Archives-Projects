@@ -168,7 +168,7 @@ function generateStatusReport(&$sessionStats) {
   }
   if ($sessionStats["errors"]) {
     $report .= "<font color='Red'><b>" . plural($sessionStats["errors"], "error");
-    $report .= "</b></font>. Please correct the errors below and try again.<br>";
+    $report .= ".</b></font> Please correct the errors below and try again.<br>";
   }
   $report .= str_repeat("_", 50)."<br><br>";
 
@@ -187,24 +187,22 @@ function generateStatusReport(&$sessionStats) {
 
 // Builds and runs a query that gets each index field and concatenates the
 // keywords into one term. Returns an array of ids => indexfields
-function getIndexFieldValues($id, $params, &$sessionStats) {
-  $otherTables = $params['tables'];
-  $userFields = $params['userFields'];
-  $creators = $params['hasCreators'];
-  $selectOTs = ""; // Other tables, usually tblCollections_Content
-  $selectUFs = ""; // User fields, always tblCollections_UserFields
+function getIndexFieldValues($id, $userFields, &$sessionStats) {
+  $defaultValues = array('Title', 'Date', 'Description');
+  $collectionTitle = $userFields['collectionTitle'];
+  $creators = $userFields['hasCreators'];
+  unset($userFields['collectionTitle']);
+  unset($userFields['hasCreators']);
+  $selectDVs = ""; // Select default values from tblCollections_Content
+  $selectUFs = ""; // Select user fields from tblCollections_UserFields
 
-  $idList = implode(',', array_map('intval', $id));
+  $idListAsString = implode(',', array_map('intval', $id));
 
   // ----- Start Query ----- //
-  if ($otherTables) {
-    $selectOTs = " (SELECT ID AS ContentID, CONCAT_WS('; ', ";
-    $selectOTs .= implode(", ", array_keys($otherTables));
-    $selectOTs .= ") AS Value FROM ";
-    $selectOTs .= implode(", ", array_values(array_unique($otherTables)));
-    $selectOTs .= " WHERE ID IN (" . $idList . ")) ";
-    $selectOTs .= ($userFields or $creators) ? "UNION" : "";
-  }
+  $selectDVs = " (SELECT ID AS ContentID, CONCAT_WS('; ', ";
+  $selectDVs .= implode(", ", $defaultValues) . ") AS Value FROM ";
+  $selectDVs .= "tblCollections_Content WHERE ID IN (" . $idListAsString . ")) ";
+  $selectDVs .= ($userFields or $creators) ? "UNION" : "";
 
   if ($userFields) {
     $ufs = array();
@@ -213,7 +211,7 @@ function getIndexFieldValues($id, $params, &$sessionStats) {
     }
     $selectUFs = " (SELECT ContentID, Value FROM tblCollections_UserFields WHERE (";
     $selectUFs .= implode("OR ", $ufs);
-    $selectUFs .= ") AND ContentID IN (" . $idList . "))";
+    $selectUFs .= ") AND ContentID IN (" . $idListAsString . "))";
     $selectUFs .= ($creators) ? "UNION" : "";
   }
 
@@ -221,11 +219,11 @@ function getIndexFieldValues($id, $params, &$sessionStats) {
     $selectCRs = " (SELECT a.CollectionContentID ContentID, b.Name Value
     FROM tblCollections_CollectionContentCreatorIndex AS a
     JOIN tblCreators_Creators AS b ON a.CreatorID = b.ID
-    AND a.CollectionContentID IN (" . $idList . ")) ";
+    AND a.CollectionContentID IN (" . $idListAsString . ")) ";
   }
 
   $query = "SELECT tmp.ContentID, GROUP_CONCAT(tmp.Value SEPARATOR '; ') AS IndexField FROM (";
-  $query .= $selectOTs . $selectUFs . $selectCRs . ") AS tmp GROUP BY ContentID";
+  $query .= $selectDVs . $selectUFs . $selectCRs . ") AS tmp GROUP BY ContentID";
   // ----- End Query ----- //
 
 
@@ -235,7 +233,8 @@ function getIndexFieldValues($id, $params, &$sessionStats) {
   // Put results into an array
   foreach ($rows as $item) {
     $sessionStats['numitems']++;
-    $idxflds = str_replace("'", "''", $item['IndexField']); // Escape apostrophes
+    $idxflds = $collectionTitle . "; " . $item['IndexField'];
+    $idxflds = str_replace("'", "''", $idxflds); // Escape apostrophes
     if ($idxflds) {
       $idxflds = explodeDates($idxflds, $item['ContentID']);
       $indexFieldVals[$item['ContentID']] = $idxflds;
@@ -249,21 +248,21 @@ function getIndexFieldValues($id, $params, &$sessionStats) {
 
 
 // Fetches the data in the RevisionHistory field of the collection and returns
-// an array containing the user fields the other tables
+// an array containing the collection title, user fields, and a bool $hasCreators
+// representing whether there are creators associated with this record
 function getIndexSources($idNum, &$sessionStats) {
   $verbose = ($sessionStats['indexType'] != 'all');
-  $indexFieldSources = array( "userFields" => array(),
-                              "tables" => array(),
-                              "hasCreators" => false);
+  $indexFieldSources = array();
+  $hasCreators = false;
 
-  // Query depends on if we are givin collection id or item id
+  // Query depends on if we are given collection id or item id
   if ($sessionStats["indexType"] == 'item') {
-    $query = "SELECT RevisionHistory, CollectionID
+    $query = "SELECT tblCollections_Collections.Title, RevisionHistory, CollectionID
               FROM tblCollections_Collections, tblCollections_Content
               WHERE tblCollections_Content.CollectionID = tblCollections_Collections.ID
               AND tblCollections_Content.ID=$idNum";
   } else {
-    $query = "SELECT RevisionHistory
+    $query = "SELECT Title, RevisionHistory
               FROM tblCollections_Collections
               WHERE ID=$idNum";
   }
@@ -271,6 +270,7 @@ function getIndexSources($idNum, &$sessionStats) {
   $row = runQuery($query, $sessionStats, true);
 
   $collectionID = $row['CollectionID'] ? $row['CollectionID'] : $idNum;
+  $indexFieldSources['collectionTitle'] = $row['Title'];
 
   if (!$row) {
     echo "ERROR: " . ucfirst($sessionStats['indexType']) . " does not exist.";
@@ -279,48 +279,30 @@ function getIndexSources($idNum, &$sessionStats) {
 
   } elseif ($row['RevisionHistory']) {
     $revisionList = explode(', ', $row['RevisionHistory']);
-    if ($verbose) echo "Indexing: <br>";
+    if ($verbose) echo "Indexing user fields: <br>";
 
-    // If there is an '=' character in the string, we know it is a user field.
-    // If not, we are only accepting tblCollections_Content.
     foreach ($revisionList as $indexField) {
-      $arr = explode('.', $indexField);
-      $arr2 = explode('=', $arr[1]);
-      $table = $arr[0];
-      $field = $arr2[0];
-
-      $valid = verifyParameter($table, $field, &$sessionStats, $arr2[1]);
-
-      if ($valid) {
-        if ($verbose) echo "$indexField<br>";
-        if ($arr2[1]) {
-          $indexFieldSources["userFields"][] = $arr2[1];
-        } else {
-          $indexFieldSources["tables"][$indexField] = $table;
-        }
-      } else {
-        echo "Skipping index term: \"$indexField\" in <a target=\"_blank\"
-              href= ?p=admin/collections/collections&id=" . $collectionID .
-              " style=\"color:#B5EFFF\">collection $collectionID</a><br>";
+      // Make sure user field is valid
+      $row =  runQuery("SELECT ID FROM tblCollections_UserFields WHERE Title = '$indexField'", $sessionStats, true);
+      if (count($row) == 0) {
+        echo "Warning: User field \"$indexField\" does not exist for any item in
+              <a target=\"_blank\" href= ?p=admin/collections/collections&id=$collectionID
+              style=\"color:#B5EFFF\">collection $collectionID</a><br>";
         $sessionStats['warnings']++;
+      } elseif (!strcasecmp($indexField, "IndexField")) {
+        echo "Warning: You cannot index the current index field, stop trying to break Archon.<br>";
+      } else {
+        $indexFieldSources[] = $indexField;
+        if ($verbose) echo "<li>$indexField</li>";
       }
     }
 
   } else {
     if ($verbose) {
-      echo "ERROR: No index terms specified for " . $sessionStats['indexType'];
-      echo " $idNum. Please add terms to the Revision History field of this
-            collection and try again.";
-      $sessionStats["errors"]++;
+      echo "Warning: No index terms specified for " . $sessionStats['indexType'];
+      echo " $idNum. Indexing will continue with default values.<br>";
+      $sessionStats["warnings"]++;
     }
-    return false;
-  }
-
-  if (!($indexFieldSources["userFields"] or $indexFieldSources["tables"])) {
-      echo "ERROR: The index terms for collection $collectionID are invalid.
-            Please correct and try again.<br>";
-      $sessionStats["errors"]++;
-      return false;
   }
 
   // Determine if any items in this collection have creators
@@ -330,11 +312,12 @@ function getIndexSources($idNum, &$sessionStats) {
             AND c.CollectionContentID = b.ID";
 
   $row = runQuery($query, $sessionStats, true);
+  $indexFieldSources['hasCreators'] = $row['creators'];
+  return $indexFieldSources;
   if ($row) {
-    $indexFieldSources["hasCreators"] = ($row['creators'] != NULL);
+    $hasCreators = ($row['creators'] != NULL);
   }
 
-  return $indexFieldSources;
 }
 
 
@@ -385,7 +368,7 @@ function runQuery($q, &$sessionStats, $getOnlyFirstRow = false) {
   if(PEAR::isError($result)) {
     echo "ERROR: Unable to index ".$sessionStats["indexType"];
     echo ". There is a problem with the following query:<br><br>";
-    echo "$q<br><br>  Make sure have defined the index terms correctly in
+    echo "$q<br><br>  Make sure you have defined the index terms correctly in
           the collection's Revision History field.";
     $sessionStats["errors"]++;
     generateStatusReport($sessionStats);
@@ -461,55 +444,5 @@ function updateIndexField($indexFieldValues, &$sessionStats) {
 }
 
 
-// Checks to see whether the parameters entered in RevisionHistory are valid
-function verifyParameter($table, $field, &$sessionStats, $value = NULL) {
-  $validTables = array("tblCollections_Content", "tblCollections_UserFields");
-  $warning = "Warning: %s \"%s\" does not exist.  ";
-
-  // Check if the table exists
-  $t_exists = false;
-  $tableList = runQuery("SELECT TABLE_NAME FROM information_schema.tables WHERE TABLE_NAME LIKE 'tbl%'", $sessionStats);
-  foreach ($tableList as $t) {
-    if ($table == $t['TABLE_NAME']) $t_exists = true;
-  }
-  if (!$t_exists) {
-    echo sprintf($warning, "Table", $table);
-    return false;
-  }
-
-  // Check if the column exists
-  $c_exists = false;
-  $columnList = runQuery("SHOW COLUMNS FROM $table", $sessionStats);
-  foreach ($columnList as $col) {
-    if (ucfirst($field) == $col['Field']) $c_exists = true;
-  }
-  if (!$c_exists) {
-    echo sprintf($warning, "Field", $field);
-    return false;
-  }
-
-  // Check if the user field exists
-  if ($value) {
-    $row =  runQuery("SELECT ID FROM $table WHERE Title = '$value'", $sessionStats, true);
-    if (count($row) == 0) {
-      echo sprintf($warning, "User field", $value);
-      return false;
-    }
-  }
-
-  // Check if they are indexing from a valid tables
-  if (!in_array($table, $validTables)) {
-    echo "Warning: You cannot select index terms from this table.<br>";
-    return false;
-  }
-
-  // Don't let them put IndexField as a user field to indexing
-  if (!strcasecmp($value, "IndexField")) {
-    echo "Warning: You cannot index the current index field, stop trying to break Archon.<br>";
-    return false;
-  }
-
-  return true;
-}
 
 ?>
