@@ -29,8 +29,15 @@ Process:
 
 5. Using the import button as an example, I implemented a pop-up report of the results of the indexing.  This also allowed for the loading gif to run while fetching the data.
 
+6. The pop-up report was customized by changing the javascript for the window and the HTML printed out from indexutil.php.  No CSS changes were made.
 
-Notes:
+7. To provide update on save functionality, I originally made another file that would run most of the same code as indexutil.php but without printing anything out.  The reasoning was that printing caused an error box to pop up after indexing, which was annoying and unhelpful.  Eventually I discovered that the reason the error box was being shown was because it was in a state where any printing/echoing not in xml formatted Archon response was considered an error.  I fixed this problem by adding a check to indexutil.php seeing where the request was coming from, and if it was from collectioncontent.php to output an xml header.
+
+8. Many small tweaks were made to the output (along with small bug fixes), but the final product has all the functionality we initially imagined.
+
+
+
+Notes from the process:
 
 Running on Collection ID 50 (7224 items)
 Trial 1: took 8.5 minutes, however a bug in the code caused no items to actually update.
@@ -69,6 +76,8 @@ For some reason, there is no time difference from updating or not, even though n
 
 
 === Time Tests ===
+
+UPDATE: Time tests from more accurate testing on the development instance (archon.test.carleton.edu) are stored in a Google Doc.  Ask Nat.
 
 How much does adding the index field slow down loading the page?
 
