@@ -9,15 +9,18 @@ This mod adds views for video and audio files to the default image thumbnail vie
 
 
 -- Installation --
-Replace the following files with the ones in this folder:
-	- themes/carleton/style.css
+1. Replace the following files with the ones in this folder:
 	- packages/digitallibrary/templates/carleton/thumbnails.inc.php
 	- packages/digitallibrary/pub/thumbnails.php
 	- packages/collections/templates/carleton/controlcard.inc.php
 	- packages/collections/pub/controlcard.php
-	- OPTIONAL: Change themes/carleton/header.inc.php to direct the digital content link directly to thumbnail page:
-		Find: ?p=digitallibrary/digitallibrary
-		Replace: ?p=digitallibrary/thumbnails
+	- themes/carleton/style.css
+
+2. Put the folder thumbnail-icons in themes/carleton/images
+
+3.  OPTIONAL: Change themes/carleton/header.inc.php to direct the digital content link directly to thumbnail page:
+	Find: ?p=digitallibrary/digitallibrary
+	Replace: ?p=digitallibrary/thumbnails
 
 Alternatively, the specific changes within each of these files are marked by a comment containing "VTNM" (Video ThumbNail Mod), so it would not be difficult to insert those changes in existing files without complete replacement.
 
