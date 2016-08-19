@@ -528,6 +528,7 @@ abstract class DigitalLibrary_DigitalContent
     {
         global $_ARCHON;
 
+        $ignoreArray = array('DS_Store', 'Thumbs.db', '_picasa.ini', 'FINDER.DAT');
         $fileArray = array();
         $unrecognizable = array();
 
@@ -553,7 +554,15 @@ abstract class DigitalLibrary_DigitalContent
                     elseif ($_ARCHON->getFileTypeForExtension($ext)) {
                         $fileArray[$this -> ContentURL."/".$file] = filesize($filePath);
                     } else {
-                        $unrecognizable[] = $this -> ContentURL."/".$file;
+                        $shouldIgnoreFile = false;
+                        foreach ($ignoreArray as $f) {
+                          if (strpos($file, $f) !== false) {
+                            $shouldIgnoreFile = true;
+                          }
+                        }
+                        if (!$shouldIgnoreFile){
+                          $unrecognizable[] = $this -> ContentURL."/".$file;
+                        }
                     }
                 }
             }
