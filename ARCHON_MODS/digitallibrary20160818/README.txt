@@ -20,6 +20,10 @@ packages/digitallibrary/admin/updatecontentfiles.php
 packages/digitallibrary/lib/digitalcontent.inc.php
 
 
+How to Use:
+Just press the button "Sync Digital Content" and it will do the rest! A new page will open and give a report on what files have been updated. If it is uploading a file that you want it to ignore, edit the ignore array in digitalcontent.inc.php (line 531).
+
+
 Known Issues:
 - Deleting a file from the admin interface does not actually delete the file (because the user does not have permission to delete files on the server). It is removed from the database, but because it still exists in the file structure, it will be added back into the database the next time a sync is made.
 - If an error is raised saving a file from the admin interface (ex. a file has a bad extension), no further errors will be reported unless the page is refreshed.  Instead, a blank error box appears upon hitting save again, unless the error is immediately fixed.  Looking into it revealed that it would be complicated to fix and not worth it for such a specific bug.

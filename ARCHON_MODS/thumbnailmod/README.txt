@@ -12,16 +12,17 @@ This mod adds views for video and audio files to the default image thumbnail vie
 1. Replace the following files with the ones in this folder:
 	- packages/digitallibrary/templates/carleton/thumbnails.inc.php
 	- packages/digitallibrary/pub/thumbnails.php
-	- packages/collections/templates/carleton/controlcard.inc.php
-	- packages/collections/pub/controlcard.php
 	- themes/carleton/style.css
 
 2. Put the folder thumbnail-icons in themes/carleton/images
 
-3.  OPTIONAL: Change themes/carleton/header.inc.php to direct the digital content link directly to thumbnail page:
+3. OPTIONAL: Change themes/carleton/header.inc.php to direct the digital content link directly to thumbnail page:
 	Find: ?p=digitallibrary/digitallibrary
 	Replace: ?p=digitallibrary/thumbnails
 
+4. OPTIONAL: Add more links to the different media thumbnails from the collection level. Replace these files: 
+	- packages/collections/templates/carleton/controlcard.inc.php
+	- packages/collections/pub/controlcard.php
 Alternatively, the specific changes within each of these files are marked by a comment containing "VTNM" (Video ThumbNail Mod), so it would not be difficult to insert those changes in existing files without complete replacement.
 
 Using the phrase manager, update the phrase digitallibrary_browsethumbnails to "Browse Thumbnails" or "Browse All Thumbnails", to reflect the change.
@@ -38,9 +39,11 @@ Because the default HTML5 audio player does not fit well in a thumbnail sized fr
 
 The radio buttons and search bar at the top of the thumbnail page are intended to make finding desired thumbnails quick and easy. Although the only options are video, audio, images, and all, it could also be set up to include documents or other media.  Buttons for those can be added in the same way.
 
-The changes in pub/controlcard.php and controlcard.inc.php are for clicking directly to a different media format from a collection's controlcard page (rather than only having the choice to browse image thumbnails).  This could also be done as a result of searching the digital library, such is already done with images (digitallibrary/pub/search.php line 115), but I think this would not look good because it might place too many "browse x thumbnails" links in the results list of the search.
+The changes in pub/controlcard.php and controlcard.inc.php are an example of changing other files to incorporate non-image thumbnails. They allow clicking directly to a different media format from a collection's controlcard page (rather than only having the choice to browse image thumbnails).  This could also be done as a result of searching the digital library, such is already done with images (digitallibrary/pub/search.php line 115), but I think this would not look good because it might place too many "browse x thumbnails" links in the results list of the search. We decided not to implement the change, but the files remain as an example.
 
 Several other files refer to the digital library thumbnails and could potentially be updated to represent that it now shows more media types.  These files are:
+	collections/pub/controlcard.php
+	collections/templates/carleton/controlcard.inc.php
 	creators/pub/creator/php
 	creators/templates/carleton/creator.inc.php
 	digitallibrary/pub/digitallibrary.php
